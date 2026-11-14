@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "Personal Gym",
+    "slug": "personal-gym",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "personalgym",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gopi.personalgym",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Choose progress photos and a profile picture from your library.",
+        "NSCameraUsageDescription": "Take progress photos directly in the app.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
+    },
+    "android": {
+      "package": "com.gopi.personalgym",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#0B0F14"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Personal Gym to access your photos for progress pictures."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0B0F14"
+        }
+      ],
+      "expo-build-properties",
+      "expo-video"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
