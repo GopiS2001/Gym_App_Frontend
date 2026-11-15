@@ -20,7 +20,8 @@ import {
   SectionHeader,
   Txt,
 } from '@/components/ui';
-import { useConfirm } from '@/components/Dialog';
+import { useDialog } from '@/components/Dialog';
+import { getErrorMessage } from '@/services/api';
 import { ActivityRings, BarChart, ProgressRing } from '@/components/charts';
 import { formatTime, todayIso } from '@/utils/format';
 
