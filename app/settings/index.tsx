@@ -361,6 +361,7 @@ export default function SettingsScreen() {
 
 function ChangePasswordCard({ onDone }: { onDone: () => void }) {
   const { theme, spacing } = useTheme();
+  const { notify } = useDialog();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
