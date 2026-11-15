@@ -344,6 +344,31 @@ export default function LoginScreen() {
                   </View>
                 )}
 
+                {waking && !error && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      padding: spacing.md,
+                      borderRadius: radius.md,
+                      backgroundColor: 'rgba(62,207,142,0.12)',
+                      borderWidth: StyleSheet.hairlineWidth * 2,
+                      borderColor: 'rgba(62,207,142,0.3)',
+                      marginBottom: spacing.base,
+                    }}
+                  >
+                    <Ionicons
+                      name="time-outline"
+                      size={17}
+                      color="#6EE7B7"
+                      style={{ marginRight: spacing.sm }}
+                    />
+                    <Txt variant="small" color="#A7F3D0" style={{ flex: 1 }}>
+                      Waking up the server… this can take up to a minute.
+                    </Txt>
+                  </View>
+                )}
+
                 <Button
                   title="Sign in"
                   onPress={handleSignIn}
