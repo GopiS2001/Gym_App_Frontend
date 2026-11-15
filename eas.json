@@ -7,7 +7,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://YOUR-RENDER-SERVICE.onrender.com/api/v1"
+        "EXPO_PUBLIC_API_URL": "https://gym-app-backend-e8v6.onrender.com/api/v1"
       },
       "android": {
         "buildType": "apk"
@@ -16,7 +16,7 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://YOUR-RENDER-SERVICE.onrender.com/api/v1"
+        "EXPO_PUBLIC_API_URL": "https://gym-app-backend-e8v6.onrender.com/api/v1"
       }
     }
   },
