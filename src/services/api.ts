@@ -159,9 +159,52 @@ export interface ApiEnvelope<T> {
   timestamp?: string;
 }
 
+// --- server wake-up ---------------------------------------------------------
+// The backend runs on Render's free plan, which sleeps after 15 idle minutes
+// and needs ~50s to start again. While it starts, requests fail fast or hang,
+// so `wakeServer` polls /health until the server answers (up to ~90s). One
+// shared promise covers every caller, so a burst of requests pings once.
+const WAKE_LIMIT_MS = 90_000;
+let wakePromise: Promise<boolean> | null = null;
+
+async function pingHealth(): Promise<boolean> {
+  try {
+    const res = await axios.get(`${API_ORIGIN}/health`, { timeout: 15_000 });
+    return res.status === 200;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Resolves true once the server is up, false if it never answered.
+ * `onWaiting` fires when the first quick ping fails, so the UI can say
+ * "waking up" instead of looking frozen.
+ */
+export function wakeServer(onWaiting?: () => void): Promise<boolean> {
+  if (!wakePromise) {
+    wakePromise = (async () => {
+      const started = Date.now();
+      if (await pingHealth()) return true;
+      onWaiting?.();
+      while (Date.now() - started < WAKE_LIMIT_MS) {
+        await new Promise((r) => setTimeout(r, 3_000));
+        if (await pingHealth()) return true;
+      }
+      return false;
+    })().finally(() => {
+      wakePromise = null;
+    });
+  } else if (onWaiting) {
+    // Someone else is already waiting on a sleeping server.
+    onWaiting();
+  }
+  return wakePromise;
+}
+
 export const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 20000,
+  timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 });
 
