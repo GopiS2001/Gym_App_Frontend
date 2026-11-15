@@ -250,10 +250,21 @@ api.interceptors.response.use(
   async (error: AxiosError<any>) => {
     const original = error.config as InternalAxiosRequestConfig & {
       _retried?: boolean;
+      _woke?: boolean;
     };
 
     const isAuthCall = original?.url?.includes('/auth/login') ||
       original?.url?.includes('/auth/refresh');
+
+    // No response at all: most likely the server is asleep. Wake it and retry
+    // once. Only for reads and login, so a write that may have reached the
+    // server is never sent twice.
+    const method = (original?.method || 'get').toLowerCase();
+    const safeToRetry = method === 'get' || original?.url?.includes('/auth/login');
+    if (!error.response && original && !original._woke && safeToRetry) {
+      original._woke = true;
+      if (await wakeServer()) return api(original);
+    }
 
     if (error.response?.status === 401 && original && !original._retried && !isAuthCall) {
       original._retried = true;
