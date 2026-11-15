@@ -102,6 +102,21 @@ export default function AddFoodScreen() {
     if (result) router.back();
   };
 
+  const confirm = useConfirm();
+  const remove = useMutation(() => nutritionApi.remove(id!));
+
+  const handleDelete = async () => {
+    const ok = await confirm({
+      title: 'Delete entry',
+      message: `Remove "${foodName || 'this food'}" from your log?`,
+      tone: 'danger',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
+    const result = await remove.mutate();
+    if (result !== undefined && !remove.error) router.back();
+  };
+
   if (isEdit && existing.loading) {
     return (
       <Screen withTabBar={false}>
