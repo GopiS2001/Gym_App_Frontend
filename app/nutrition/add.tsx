@@ -118,7 +118,7 @@ export default function AddFoodScreen() {
     });
     if (!ok) return;
     const result = await remove.mutate();
-    if (result !== undefined && !remove.error) router.back();
+    if (result) router.back();
   };
 
   if (isEdit && existing.loading) {
