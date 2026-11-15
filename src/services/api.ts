@@ -234,7 +234,7 @@ async function refreshAccessToken(): Promise<string | null> {
     const res = await axios.post<ApiEnvelope<any>>(
       `${API_BASE_URL}/auth/refresh`,
       { refreshToken },
-      { headers: { 'Content-Type': 'application/json' }, timeout: 20000 },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 60000 },
     );
     const { accessToken, refreshToken: newRefresh } = res.data.data;
     await tokenStore.save(accessToken, newRefresh);
