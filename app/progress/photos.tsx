@@ -346,6 +346,7 @@ function UploadPhotoModal({
   onSaved: () => void;
 }) {
   const { theme, spacing, radius } = useTheme();
+  const { notify } = useDialog();
 
   const [localUri, setLocalUri] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState('');
