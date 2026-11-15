@@ -301,10 +301,10 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
   }
 
   if (err?.code === 'ECONNABORTED') {
-    return 'The request timed out. Check that the server is reachable.';
+    return 'The server took too long to answer. Please try again in a moment.';
   }
   if (err?.message === 'Network Error') {
-    return `Cannot reach the server at ${API_BASE_URL}. Make sure it is running and on the same network.`;
+    return 'Cannot reach the server. Check your internet connection and try again.';
   }
   if (err?.message) return err.message;
 
