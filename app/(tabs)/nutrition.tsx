@@ -62,11 +62,11 @@ export default function NutritionScreen() {
       if (!ok) return;
       try {
         await nutritionApi.remove(id);
-      } catch {
-        await confirm({
+      } catch (e) {
+        await notify({
           title: 'Could not delete',
-          message: 'Check your connection and try again.',
-          confirmLabel: 'OK',
+          message: getErrorMessage(e),
+          tone: 'danger',
         });
       }
       daily.refresh();
