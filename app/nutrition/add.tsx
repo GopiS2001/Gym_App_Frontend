@@ -9,6 +9,7 @@ import { nutritionApi } from '@/services/endpoints';
 import { Screen, ScreenHeader } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
 import { Button, Chip, EmptyState, Field, LoadingState, SectionHeader, Txt } from '@/components/ui';
+import { useConfirm } from '@/components/Dialog';
 
 export default function AddFoodScreen() {
   const { theme, spacing, radius } = useTheme();
