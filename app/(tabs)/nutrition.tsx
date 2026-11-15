@@ -373,6 +373,24 @@ export default function NutritionScreen() {
                   <Txt variant="small" style={{ fontWeight: '700' }}>
                     {Math.round(item.calories)}
                   </Txt>
+
+                  <Pressable
+                    onPress={() => deleteFood(item.id, item.foodName)}
+                    hitSlop={10}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Delete ${item.foodName}`}
+                    style={({ pressed }) => ({
+                      marginLeft: spacing.md,
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: pressed ? 'rgba(255,107,114,0.25)' : 'rgba(255,107,114,0.12)',
+                    })}
+                  >
+                    <Ionicons name="trash-outline" size={16} color={theme.danger} />
+                  </Pressable>
                 </Pressable>
               ))}
             </GlassCard>
