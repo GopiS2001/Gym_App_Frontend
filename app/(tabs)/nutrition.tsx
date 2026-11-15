@@ -60,7 +60,15 @@ export default function NutritionScreen() {
       confirmLabel: 'Delete',
     }).then(async (ok) => {
       if (!ok) return;
-      await nutritionApi.remove(id).catch(() => undefined);
+      try {
+        await nutritionApi.remove(id);
+      } catch {
+        await confirm({
+          title: 'Could not delete',
+          message: 'Check your connection and try again.',
+          confirmLabel: 'OK',
+        });
+      }
       daily.refresh();
       history.refresh();
     });
