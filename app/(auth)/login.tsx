@@ -91,6 +91,12 @@ export default function LoginScreen() {
 
     setSubmitting(true);
     try {
+      const up = await wakeServer(() => setWaking(true));
+      setWaking(false);
+      if (!up) {
+        setError('The server is not responding right now. Please try again in a minute.');
+        return;
+      }
       await signIn(email, password);
       // Navigation is handled by the root layout once the session is set.
     } catch (e: any) {
