@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useAuth } from '@/store/AuthContext';
 import { Button, Field, Txt } from '@/components/ui';
-import { API_BASE_URL } from '@/services/api';
+import { API_BASE_URL, wakeServer } from '@/services/api';
 
 const { height: SCREEN_H } = Dimensions.get('window');
 
