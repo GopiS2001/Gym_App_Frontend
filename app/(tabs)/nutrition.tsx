@@ -398,7 +398,7 @@ export default function NutritionScreen() {
       )}
 
       <Txt variant="caption" color={theme.textTertiary} align="center" style={{ marginTop: spacing.sm }}>
-        Tap an item to edit · Long press to delete
+        Tap an item to edit · Tap the bin to delete
       </Txt>
     </Screen>
   );
