@@ -4,28 +4,20 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "base": {
+    "preview": {
+      "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://YOUR-RENDER-SERVICE.onrender.com/api/v1"
-      }
-    },
-    "development": {
-      "extends": "base",
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "extends": "base",
-      "distribution": "internal",
-      "channel": "preview",
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
-      "extends": "base",
-      "channel": "production",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://YOUR-RENDER-SERVICE.onrender.com/api/v1"
+      }
     }
   },
   "submit": {
