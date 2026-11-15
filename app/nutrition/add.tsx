@@ -335,6 +335,27 @@ export default function AddFoodScreen() {
           loading={save.loading}
           onPress={handleSave}
         />
+
+        {isEdit && (
+          <>
+            {remove.error && (
+              <Txt variant="small" color={theme.danger} style={{ marginTop: spacing.md }}>
+                {remove.error}
+              </Txt>
+            )}
+            <View style={{ marginTop: spacing.md }}>
+              <Button
+                title="Delete entry"
+                icon="trash-outline"
+                variant="danger"
+                fullWidth
+                size="lg"
+                loading={remove.loading}
+                onPress={handleDelete}
+              />
+            </View>
+          </>
+        )}
       </GlassCard>
     </Screen>
   );
