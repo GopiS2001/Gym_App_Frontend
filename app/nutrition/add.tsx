@@ -103,7 +103,11 @@ export default function AddFoodScreen() {
   };
 
   const confirm = useConfirm();
-  const remove = useMutation(() => nutritionApi.remove(id!));
+  // Resolves true on success; useMutation turns a failure into null + error.
+  const remove = useMutation(async () => {
+    await nutritionApi.remove(id!);
+    return true;
+  });
 
   const handleDelete = async () => {
     const ok = await confirm({
