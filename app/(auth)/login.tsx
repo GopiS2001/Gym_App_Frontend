@@ -40,6 +40,18 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [showDebug, setShowDebug] = useState(false);
+  // True while the free-plan server is starting up after sleeping.
+  const [waking, setWaking] = useState(false);
+
+  // Start waking the server as soon as the screen opens, so it is usually
+  // ready by the time the password is typed.
+  useEffect(() => {
+    let active = true;
+    wakeServer(() => active && setWaking(true)).finally(() => active && setWaking(false));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Entrance animation: the card rises as the headline fades in.
   const fade = useRef(new Animated.Value(0)).current;
