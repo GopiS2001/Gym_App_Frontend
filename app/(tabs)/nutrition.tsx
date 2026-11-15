@@ -28,7 +28,7 @@ import { formatTime, todayIso } from '@/utils/format';
 const { width: SCREEN_W } = Dimensions.get('window');
 
 export default function NutritionScreen() {
-  const confirm = useConfirm();
+  const { confirm, notify } = useDialog();
   const { theme, spacing, radius } = useTheme();
   const router = useRouter();
   const [date] = useState(todayIso());
