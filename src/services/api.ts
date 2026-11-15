@@ -181,12 +181,21 @@ async function pingHealth(): Promise<boolean> {
  * `onWaiting` fires when the first quick ping fails, so the UI can say
  * "waking up" instead of looking frozen.
  */
+let wakeIsSlow = false;
+const waitingListeners = new Set<() => void>();
+
 export function wakeServer(onWaiting?: () => void): Promise<boolean> {
+  if (onWaiting) {
+    // Joining a wake-up that is already slow: tell the caller right away.
+    if (wakePromise && wakeIsSlow) onWaiting();
+    else waitingListeners.add(onWaiting);
+  }
   if (!wakePromise) {
     wakePromise = (async () => {
       const started = Date.now();
       if (await pingHealth()) return true;
-      onWaiting?.();
+      wakeIsSlow = true;
+      waitingListeners.forEach((fn) => fn());
       while (Date.now() - started < WAKE_LIMIT_MS) {
         await new Promise((r) => setTimeout(r, 3_000));
         if (await pingHealth()) return true;
@@ -194,10 +203,9 @@ export function wakeServer(onWaiting?: () => void): Promise<boolean> {
       return false;
     })().finally(() => {
       wakePromise = null;
+      wakeIsSlow = false;
+      waitingListeners.clear();
     });
-  } else if (onWaiting) {
-    // Someone else is already waiting on a sleeping server.
-    onWaiting();
   }
   return wakePromise;
 }
