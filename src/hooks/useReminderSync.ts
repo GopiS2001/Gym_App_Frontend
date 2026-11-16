@@ -78,7 +78,10 @@ export function useReminderSync(enabled: boolean) {
     );
 
     if (lastResponse.actionIdentifier === ACTION_SNOOZE) {
-      snooze(data).catch(() => undefined);
+      // If the app was closed, Expo reports the tap only on the next launch;
+      // a snooze discovered hours later would arrive at a pointless time.
+      const ageMs = Date.now() - lastResponse.notification.date;
+      if (ageMs < 2 * 60 * 60 * 1000) snooze(data).catch(() => undefined);
       return;
     }
 
