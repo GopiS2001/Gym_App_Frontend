@@ -10,6 +10,8 @@ import { AuthProvider, useAuth } from '@/store/AuthContext';
 import { DialogProvider } from '@/components/Dialog';
 import { LoadingState } from '@/components/ui';
 import { ScreenGradient } from '@/components/Glass';
+import { useReminderSync } from '@/hooks/useReminderSync';
+import { NOTIFICATIONS_SUPPORTED } from '@/services/notifications';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
