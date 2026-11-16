@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { AppImage as Image } from '@/components/AppImage';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useApi } from '@/hooks/useApi';
 import { nutritionApi, waterApi } from '@/services/endpoints';
