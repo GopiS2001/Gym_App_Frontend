@@ -118,14 +118,71 @@ export default function NutritionScreen() {
       <ScreenHeader
         title="Nutrition"
         subtitle="Calories, macros and hydration"
-        right={
-          <IconButton
-            icon="add"
-            color={theme.primary}
-            onPress={() => router.push('/nutrition/add')}
-          />
-        }
+        right={<IconButton icon="add" color={theme.primary} onPress={() => addFood()} />}
       />
+
+      {/* ----------------------------------------------------- shortcuts */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.base }}>
+        {(
+          [
+            { icon: 'library-outline', label: 'Food Library', to: '/nutrition/library' },
+            { icon: 'calendar-outline', label: 'History', to: '/nutrition/history' },
+            { icon: 'alarm-outline', label: 'Reminders', to: '/nutrition/reminders' },
+          ] as const
+        ).map((s) => (
+          <Pressable
+            key={s.to}
+            onPress={() => router.push(s.to)}
+            accessibilityRole="button"
+            style={({ pressed }) => ({
+              flex: 1,
+              alignItems: 'center',
+              paddingVertical: spacing.md,
+              borderRadius: radius.md,
+              backgroundColor: theme.surfaceMuted,
+              opacity: pressed ? 0.6 : 1,
+            })}
+          >
+            <Ionicons name={s.icon} size={19} color={theme.nutrition} />
+            <Txt variant="caption" style={{ marginTop: 4, fontWeight: '700' }}>
+              {s.label}
+            </Txt>
+          </Pressable>
+        ))}
+      </View>
+
+      {/* -------------------------------------------------- date selector */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: spacing.base,
+        }}
+      >
+        <IconButton
+          icon="chevron-back"
+          size={38}
+          onPress={() => setDate(shiftIsoDate(date, -1))}
+        />
+        <Pressable onPress={() => setDate(today)} disabled={isToday} accessibilityRole="button">
+          <Txt variant="h4" align="center">
+            {dayLabel(date, today)}
+          </Txt>
+          {!isToday && (
+            <Txt variant="caption" color={theme.primary} align="center" style={{ marginTop: 2 }}>
+              Back to today
+            </Txt>
+          )}
+        </Pressable>
+        <View style={{ opacity: isToday ? 0.3 : 1 }}>
+          <IconButton
+            icon="chevron-forward"
+            size={38}
+            onPress={() => !isToday && setDate(shiftIsoDate(date, 1))}
+          />
+        </View>
+      </View>
 
       {/* --------------------------------------------------- calorie ring */}
       <GlassCard variant="strong" style={{ marginBottom: spacing.base }}>
