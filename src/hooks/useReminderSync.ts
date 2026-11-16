@@ -6,6 +6,7 @@ import { remindersApi } from '@/services/endpoints';
 import {
   ACTION_SNOOZE,
   initNotifications,
+  NOTIFICATIONS_SUPPORTED,
   reminderDataOf,
   snooze,
   syncReminders,
