@@ -409,9 +409,29 @@ export default function NutritionScreen() {
                   </View>
                   <Txt variant="h4">{meal.label}</Txt>
                 </View>
-                <Txt variant="bodyStrong" color={theme.nutrition}>
-                  {Math.round(meal.calories)} kcal
-                </Txt>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Txt variant="bodyStrong" color={theme.nutrition}>
+                    {Math.round(meal.calories)} kcal
+                  </Txt>
+                  <Pressable
+                    onPress={() => addFood(meal.mealType)}
+                    hitSlop={10}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Add food to ${meal.label}`}
+                    style={({ pressed }) => ({
+                      marginLeft: spacing.md,
+                      width: 30,
+                      height: 30,
+                      borderRadius: 15,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: theme.nutritionSoft,
+                      opacity: pressed ? 0.6 : 1,
+                    })}
+                  >
+                    <Ionicons name="add" size={18} color={theme.nutrition} />
+                  </Pressable>
+                </View>
               </View>
 
               {meal.items.map((item, index) => (
