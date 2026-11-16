@@ -296,6 +296,39 @@ export const nutritionApi = {
   remove: (id: string) => request<any>(api.delete(`/nutrition/food/${id}`)),
 };
 
+// ---------------------------------------------------------- food library
+
+export const foodsApi = {
+  list: (query?: Query) =>
+    request<Paginated<Food>>(api.get('/foods', { params: params(query) })),
+  categories: () =>
+    request<{ items: { name: string; count: number }[] }>(api.get('/foods/categories')),
+  get: (id: string) => request<Food>(api.get(`/foods/${id}`)),
+  create: (payload: Partial<Food>) => request<Food>(api.post('/foods', payload)),
+  update: (id: string, payload: Partial<Food>) =>
+    request<Food>(api.patch(`/foods/${id}`, payload)),
+  remove: (id: string) => request<any>(api.delete(`/foods/${id}`)),
+};
+
+// --------------------------------------------------------- meal reminders
+
+export const remindersApi = {
+  list: () => request<MealReminderList>(api.get('/meal-reminders')),
+  get: (id: string) => request<MealReminder>(api.get(`/meal-reminders/${id}`)),
+  create: (payload: any) => request<MealReminder>(api.post('/meal-reminders', payload)),
+  update: (id: string, payload: any) =>
+    request<MealReminder>(api.patch(`/meal-reminders/${id}`, payload)),
+  toggle: (id: string, isEnabled?: boolean) =>
+    request<MealReminder>(api.patch(`/meal-reminders/${id}/toggle`, { isEnabled })),
+  remove: (id: string) => request<any>(api.delete(`/meal-reminders/${id}`)),
+  addSamples: () =>
+    request<MealReminderList & { created: number }>(api.post('/meal-reminders/samples')),
+  workoutSchedule: () =>
+    request<WorkoutSchedule>(api.get('/meal-reminders/workout-schedule')),
+  updateWorkoutSchedule: (payload: Partial<WorkoutSchedule>) =>
+    request<WorkoutSchedule>(api.put('/meal-reminders/workout-schedule', payload)),
+};
+
 // ----------------------------------------------------------------- water
 
 export const waterApi = {
