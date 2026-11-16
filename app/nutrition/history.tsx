@@ -108,9 +108,9 @@ export default function NutritionHistoryScreen() {
       ) : (
         <>
           <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.base }}>
-            <StatTile label="Avg calories" value={`${Math.round(s.averageCalories)}`} unit="kcal" icon="flame" color={theme.nutrition} />
-            <StatTile label="Avg protein" value={`${Math.round(s.averageProteinG)}`} unit="g" icon="barbell" color={theme.primary} />
-            <StatTile label="Days logged" value={`${s.daysLogged}/${s.rangeDays}`} icon="calendar" color={theme.sleep} />
+            <StatTile style={{ flex: 1 }} label="Avg calories" value={`${Math.round(s.averageCalories)}`} unit="kcal" icon="flame" color={theme.nutrition} />
+            <StatTile style={{ flex: 1 }} label="Avg protein" value={`${Math.round(s.averageProteinG)}`} unit="g" icon="barbell" color={theme.primary} />
+            <StatTile style={{ flex: 1 }} label="Days logged" value={`${s.daysLogged}/${s.rangeDays}`} icon="calendar" color={theme.sleep} />
           </View>
 
           <GlassCard style={{ marginBottom: spacing.base }}>

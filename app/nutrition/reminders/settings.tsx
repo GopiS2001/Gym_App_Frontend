@@ -158,7 +158,7 @@ export default function ReminderSettingsScreen() {
             setSavedNote(undefined);
           }}
           placeholder="e.g. 18:00"
-          keyboardType="numbers-and-punctuation"
+          keyboardType="default"
           icon="time-outline"
           suffix={parsed ? formatClock(parsed) : undefined}
           error={timeError}

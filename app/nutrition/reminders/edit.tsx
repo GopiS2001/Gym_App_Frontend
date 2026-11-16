@@ -209,7 +209,7 @@ export default function EditReminderScreen() {
                 setErrors((p) => ({ ...p, time: undefined }));
               }}
               placeholder="07:30"
-              keyboardType="numbers-and-punctuation"
+              keyboardType="default"
               icon="time-outline"
               suffix={parseClock(time) ? formatClock(parseClock(time)) : undefined}
               error={errors.time}

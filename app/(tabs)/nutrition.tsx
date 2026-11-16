@@ -560,20 +560,3 @@ function MacroRow({
     </View>
   );
 }
-
-function mealIcon(mealType: string): keyof typeof Ionicons.glyphMap {
-  switch (mealType) {
-    case 'BREAKFAST':
-      return 'sunny-outline';
-    case 'LUNCH':
-      return 'restaurant-outline';
-    case 'DINNER':
-      return 'moon-outline';
-    case 'PRE_WORKOUT':
-      return 'flash-outline';
-    case 'POST_WORKOUT':
-      return 'barbell-outline';
-    default:
-      return 'cafe-outline';
-  }
-}

@@ -581,7 +581,7 @@ export default function AddFoodScreen() {
             setErrors((p) => ({ ...p, time: undefined }));
           }}
           placeholder="Now, or e.g. 08:30"
-          keyboardType="numbers-and-punctuation"
+          keyboardType="default"
           icon="time-outline"
           error={errors.time}
         />
