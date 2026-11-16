@@ -277,8 +277,10 @@ export const progressApi = {
 export const nutritionApi = {
   daily: (date?: string) =>
     request<NutritionDaily>(api.get('/nutrition/daily', { params: params({ date }) })),
-  history: (days = 7) =>
-    request<NutritionHistory>(api.get('/nutrition/history', { params: { days } })),
+  history: (days = 7, endDate?: string) =>
+    request<NutritionHistory>(
+      api.get('/nutrition/history', { params: params({ days, endDate }) }),
+    ),
   mealTypes: () =>
     request<{ items: { value: string; label: string }[] }>(
       api.get('/nutrition/meal-types'),
