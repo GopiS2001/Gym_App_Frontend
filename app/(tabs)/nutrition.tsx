@@ -364,19 +364,19 @@ export default function NutritionScreen() {
 
       {/* ----------------------------------------------------- meal list */}
       <SectionHeader
-        title="Today's Meals"
+        title={isToday ? "Today's Meals" : 'Meals'}
         actionLabel="Add food"
-        onAction={() => router.push('/nutrition/add')}
+        onAction={() => addFood()}
       />
 
       {n.entryCount === 0 ? (
         <GlassCard>
           <EmptyState
             icon="restaurant-outline"
-            title="Nothing logged today"
-            message="Add your first meal to start tracking calories and macros."
+            title={isToday ? 'Nothing logged today' : 'Nothing logged this day'}
+            message="Add a food from your library to track calories and macros."
             actionLabel="Add food"
-            onAction={() => router.push('/nutrition/add')}
+            onAction={() => addFood()}
           />
         </GlassCard>
       ) : (
