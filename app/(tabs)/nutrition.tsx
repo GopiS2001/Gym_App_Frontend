@@ -504,8 +504,29 @@ export default function NutritionScreen() {
           ))
       )}
 
-      <Txt variant="caption" color={theme.textTertiary} align="center" style={{ marginTop: spacing.sm }}>
-        Tap an item to edit · Tap the bin to delete
+      {/* Quick way into a meal that has nothing logged yet. */}
+      {n.meals.some((m) => m.itemCount === 0) && (
+        <View style={{ marginTop: spacing.sm }}>
+          <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm }}>
+            ADD TO ANOTHER MEAL
+          </Txt>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+            {MEAL_TYPES.filter(
+              (m) => n.meals.find((meal) => meal.mealType === m.value)?.itemCount === 0,
+            ).map((m) => (
+              <Chip
+                key={m.value}
+                label={m.label}
+                icon={mealIcon(m.value)}
+                onPress={() => addFood(m.value)}
+              />
+            ))}
+          </View>
+        </View>
+      )}
+
+      <Txt variant="caption" color={theme.textTertiary} align="center" style={{ marginTop: spacing.base }}>
+        Tap an item to edit · Tap the bin to delete · Values are estimates
       </Txt>
     </Screen>
   );
