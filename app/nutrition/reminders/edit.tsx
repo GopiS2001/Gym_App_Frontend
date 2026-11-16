@@ -85,6 +85,7 @@ export default function EditReminderScreen() {
       const all = cur.length ? cur : WEEK_DAYS;
       const next = all.includes(d) ? all.filter((x) => x !== d) : [...all, d];
       const ordered = WEEK_DAYS.filter((x) => next.includes(x));
+      if (!ordered.length) return cur; // keep at least one day
       return ordered.length === 7 ? [] : ordered;
     });
 
