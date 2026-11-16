@@ -57,7 +57,13 @@
         }
       ],
       "expo-build-properties",
-      "expo-video"
+      "expo-video",
+      [
+        "expo-notifications",
+        {
+          "color": "#3ECF8E"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false
