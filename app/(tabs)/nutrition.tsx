@@ -275,6 +275,8 @@ export default function NutritionScreen() {
             showGlow
           />
 
+          {/* Quick add always logs "now", so it only makes sense for today. */}
+          {isToday && (
           <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md }}>
             {water.data.quickAddOptions.slice(0, 4).map((ml) => (
               <Pressable
