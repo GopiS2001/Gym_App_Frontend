@@ -223,7 +223,7 @@ export default function EditReminderScreen() {
                   key={d}
                   label={d.slice(0, 1) + d.slice(1, 3).toLowerCase()}
                   selected={days.length === 0 || days.includes(d)}
-                  onPress={() => toggleDay(days.length === 0 ? (null as any) : d)}
+                  onPress={() => toggleDay(d)}
                 />
               ))}
             </View>
