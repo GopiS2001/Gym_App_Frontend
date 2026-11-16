@@ -263,6 +263,7 @@ export async function syncReminders(
 
 /** Removes every reminder notification, e.g. on sign-out. */
 export async function clearReminders(): Promise<void> {
+  if (!NOTIFICATIONS_SUPPORTED) return;
   const pending = await Notifications.getAllScheduledNotificationsAsync();
   await Promise.all(
     pending
