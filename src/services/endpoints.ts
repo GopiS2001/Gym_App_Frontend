@@ -38,6 +38,10 @@ import type {
   WorkoutPlan,
   WorkoutSession,
   WorkoutStats,
+  Food,
+  MealReminder,
+  MealReminderList,
+  WorkoutSchedule,
 } from '@/types/models';
 
 type Query = Record<string, any> | undefined;
