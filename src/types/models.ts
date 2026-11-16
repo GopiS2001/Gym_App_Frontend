@@ -286,8 +286,86 @@ export interface ProgressPhoto {
   notes?: string | null;
 }
 
+/** A Food Library item; nutrition is per servingSize × servingUnit. */
+export interface Food {
+  id: string;
+  name: string;
+  category?: string | null;
+  servingSize: number;
+  servingUnit: string;
+  calories: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  fibreG?: number | null;
+  imageUrl?: string | null;
+  isCustom: boolean;
+  isActive: boolean;
+}
+
+export type WeekDayName =
+  | 'MONDAY'
+  | 'TUESDAY'
+  | 'WEDNESDAY'
+  | 'THURSDAY'
+  | 'FRIDAY'
+  | 'SATURDAY'
+  | 'SUNDAY';
+
+export type ReminderType =
+  | 'PRE_WORKOUT'
+  | 'BREAKFAST'
+  | 'POST_WORKOUT'
+  | 'LUNCH'
+  | 'SNACK'
+  | 'DINNER'
+  | 'BEFORE_BED'
+  | 'WATER'
+  | 'CUSTOM';
+
+export type WorkoutLink = 'NONE' | 'BEFORE' | 'AFTER';
+
+export interface MealReminder {
+  id: string;
+  title: string;
+  reminderType: ReminderType;
+  typeLabel: string;
+  /** Food Intake meal this reminder opens, if any. */
+  mealType: string | null;
+  reminderTime: string;
+  repeatDays: WeekDayName[];
+  message: string | null;
+  isEnabled: boolean;
+  workoutLink: WorkoutLink;
+  snoozeMinutes: number;
+  /** When it actually fires (workout-linked ones follow the workout schedule). */
+  schedule: {
+    time: string;
+    days: WeekDayName[];
+    basedOnWorkout: boolean;
+    needsWorkoutTime: boolean;
+  };
+}
+
+export interface WorkoutSchedule {
+  workoutTime: string | null;
+  workoutDays: WeekDayName[] | null;
+  effectiveDays: WeekDayName[];
+  daysSource: 'CUSTOM' | 'PLAN' | 'EVERY_DAY';
+  workoutDurationMin: number;
+  preWorkoutLeadMin: number;
+  postWorkoutDelayMin: number;
+}
+
+export interface MealReminderList {
+  items: MealReminder[];
+  workoutSchedule: WorkoutSchedule;
+  types: { value: ReminderType; label: string; defaultMessage: string }[];
+}
+
 export interface FoodLog {
   id: string;
+  foodId?: string | null;
   foodName: string;
   mealType: string;
   mealTypeLabel?: string;
