@@ -12,6 +12,9 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { MealReminder, WeekDayName } from '@/types/models';
 
+/** Scheduled local notifications only exist in the Android / iOS app. */
+export const NOTIFICATIONS_SUPPORTED = Platform.OS === 'android' || Platform.OS === 'ios';
+
 export const CHANNEL_ID = 'meal-reminders';
 export const CATEGORY_ID = 'meal-reminder';
 export const ACTION_SNOOZE = 'SNOOZE';
