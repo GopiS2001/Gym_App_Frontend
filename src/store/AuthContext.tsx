@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { getErrorMessage, setUnauthorizedHandler, tokenStore } from '@/services/api';
 import { authApi, profileApi, settingsApi } from '@/services/endpoints';
+import { clearReminders } from '@/services/notifications';
 import type { Profile, UserSettings } from '@/types/models';
 import { useTheme } from '@/theme/ThemeProvider';
 
