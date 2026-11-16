@@ -360,6 +360,20 @@ export default function AddFoodScreen() {
         showBack
       />
 
+      {mode === 'manual' && !isEdit && (
+        <Button
+          title="Choose from Food Library instead"
+          variant="ghost"
+          icon="library-outline"
+          fullWidth
+          style={{ marginBottom: spacing.md }}
+          onPress={() => {
+            setMode('library');
+            setFood(null);
+          }}
+        />
+      )}
+
       {/* Chosen library food */}
       {mode === 'library' && chosenName && (
         <GlassCard style={{ marginBottom: spacing.base }}>
