@@ -23,19 +23,37 @@ import {
 import { useDialog } from '@/components/Dialog';
 import { getErrorMessage } from '@/services/api';
 import { ActivityRings, BarChart, ProgressRing } from '@/components/charts';
-import { formatTime, todayIso } from '@/utils/format';
+import { formatDate, formatTime, todayIso } from '@/utils/format';
+import { MEAL_TYPES, mealIcon, shiftIsoDate } from '@/utils/nutrition';
 
 const { width: SCREEN_W } = Dimensions.get('window');
+
+function dayLabel(date: string, today: string): string {
+  if (date === today) return 'Today';
+  if (date === shiftIsoDate(today, -1)) return 'Yesterday';
+  return formatDate(`${date}T12:00:00`, 'long');
+}
 
 export default function NutritionScreen() {
   const { confirm, notify } = useDialog();
   const { theme, spacing, radius } = useTheme();
   const router = useRouter();
-  const [date] = useState(todayIso());
+  const params = useLocalSearchParams<{ date?: string }>();
+  const today = todayIso();
+  const [date, setDate] = useState(params.date || today);
+  const isToday = date === today;
+
+  // Opening the tab from History (or a notification) jumps to that day.
+  useEffect(() => {
+    if (params.date) setDate(params.date);
+  }, [params.date]);
 
   const daily = useApi(() => nutritionApi.daily(date), [date], { refetchOnFocus: true });
   const water = useApi(() => waterApi.daily(date), [date], { refetchOnFocus: true });
   const history = useApi(() => nutritionApi.history(7), [], { refetchOnFocus: true });
+
+  const addFood = (mealType?: string) =>
+    router.push({ pathname: '/nutrition/add', params: { date, ...(mealType ? { mealType } : {}) } });
 
   const refreshAll = () => {
     daily.refresh();
