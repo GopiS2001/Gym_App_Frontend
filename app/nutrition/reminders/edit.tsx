@@ -115,7 +115,6 @@ export default function EditReminderScreen() {
   const handleSave = async () => {
     const next: Record<string, string> = {};
     if (!title.trim()) next.title = 'Give the reminder a title';
-    if (days.length === 0 && !daysAreEveryDay) next.time = 'Pick at least one day';
     if (!parseClock(time)) next.time = 'Use a time like 07:30 or 19:00';
     setErrors(next);
     if (Object.keys(next).length) return;
