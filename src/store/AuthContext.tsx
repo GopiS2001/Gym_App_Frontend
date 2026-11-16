@@ -106,6 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const refreshToken = await tokenStore.getRefresh();
     // Revoking server-side is best-effort; the local session clears regardless.
     await authApi.logout(refreshToken || undefined).catch(() => undefined);
+    // Signed-out phones should not keep nagging about meals.
+    await clearReminders().catch(() => undefined);
     await clearSession();
   }, [clearSession]);
 
