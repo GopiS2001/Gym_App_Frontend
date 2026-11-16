@@ -276,6 +276,23 @@ export async function clearReminders(): Promise<void> {
   await AsyncStorage.removeItem(STORE_KEY).catch(() => undefined);
 }
 
+/** A one-off notification a few seconds from now, to check the phone shows them. */
+export async function sendTestNotification(): Promise<void> {
+  await initNotifications();
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Test reminder',
+      body: 'Meal reminders are working on this phone.',
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: 5,
+      channelId: CHANNEL_ID,
+    },
+  });
+}
+
 /** Shows the same reminder again after its snooze length. */
 export async function snooze(data: ReminderData): Promise<void> {
   const minutes = Math.max(1, data.snoozeMinutes || 10);
