@@ -313,9 +313,10 @@ export default function NutritionScreen() {
               <Ionicons name="arrow-undo" size={15} color={theme.textTertiary} />
             </Pressable>
           </View>
+          )}
 
           <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: spacing.sm }}>
-            {water.data.glassesCount} entries today
+            {water.data.glassesCount} {water.data.glassesCount === 1 ? 'entry' : 'entries'}
           </Txt>
         </GlassCard>
       )}
