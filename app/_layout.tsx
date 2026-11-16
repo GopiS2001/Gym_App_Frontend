@@ -20,6 +20,9 @@ function RootNavigator() {
   const segments = useSegments();
   const router = useRouter();
 
+  // Meal reminders: schedule while signed in and open the right screen on tap.
+  useReminderSync(isAuthenticated && !isLoading && NOTIFICATIONS_SUPPORTED);
+
   useEffect(() => {
     if (isLoading) return;
     SplashScreen.hideAsync().catch(() => undefined);
