@@ -22,6 +22,7 @@ let inFlight: Promise<SyncResult | null> | null = null;
  * changes; app start and returning to the app call it without.
  */
 export function refreshReminderSchedule({ force = false } = {}): Promise<SyncResult | null> {
+  if (!NOTIFICATIONS_SUPPORTED) return Promise.resolve(null);
   if (!force && Date.now() - lastSync < 30_000) return Promise.resolve(null);
   if (inFlight && !force) return inFlight;
   const run = (async () => {
