@@ -79,10 +79,13 @@ export default function EditReminderScreen() {
     }
   };
 
+  // An empty list means every day, so tapping a day then turns just that one off.
   const toggleDay = (d: WeekDayName) =>
     setDays((cur) => {
-      const next = cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d];
-      return WEEK_DAYS.filter((x) => next.includes(x));
+      const all = cur.length ? cur : WEEK_DAYS;
+      const next = all.includes(d) ? all.filter((x) => x !== d) : [...all, d];
+      const ordered = WEEK_DAYS.filter((x) => next.includes(x));
+      return ordered.length === 7 ? [] : ordered;
     });
 
   const save = useMutation(async () => {
