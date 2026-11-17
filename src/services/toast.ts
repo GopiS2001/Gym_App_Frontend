@@ -33,10 +33,15 @@ const GENERIC: Record<string, string> = {
 };
 
 /**
- * Writes that should stay quiet: sign-in plumbing, and the file upload that
- * is always followed by a save of its own (which shows the toast).
+ * Requests that should stay quiet: sign-in plumbing, the file upload that is
+ * always followed by a save of its own (which shows the toast), and photo
+ * comparison, which is a POST but only reads.
  */
-const SILENT = [/\/auth\/(login|refresh|logout|setup)/, /\/media\/upload/];
+const SILENT = [
+  /\/auth\/(login|refresh|logout|setup)/,
+  /\/media\/upload/,
+  /\/progress\/photos\/compare/,
+];
 
 /** The toast for a successful write, or null when it should stay quiet. */
 export function toastForWrite(
