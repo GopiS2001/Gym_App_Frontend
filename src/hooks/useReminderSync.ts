@@ -14,6 +14,14 @@ import {
 } from '@/services/notifications';
 import { todayIso } from '@/utils/format';
 
+/**
+ * Expo's hook throws on web (there is no notification module there), so web
+ * gets a stand-in that never reports a tap. Chosen once at load, so the
+ * rules of hooks still hold.
+ */
+const useLastResponse: () => Notifications.NotificationResponse | null | undefined =
+  NOTIFICATIONS_SUPPORTED ? Notifications.useLastNotificationResponse : () => null;
+
 let lastSync = 0;
 let inFlight: Promise<SyncResult | null> | null = null;
 
