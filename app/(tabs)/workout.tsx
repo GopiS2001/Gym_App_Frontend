@@ -21,6 +21,7 @@ import {
   SectionHeader,
   Txt,
 } from '@/components/ui';
+import { ActionRow, ActionTile, ArrowDisc, IconWell, SegmentedControl } from '@/components/premium';
 import { DIFFICULTY_LABELS, WEEK_DAY_LABELS, formatMinutes } from '@/utils/format';
 import type { Exercise, WorkoutCategory } from '@/types/models';
 
@@ -47,43 +48,14 @@ export default function WorkoutScreen() {
         }
       />
 
-      {/* Segmented switch */}
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 4,
-          borderRadius: radius.pill,
-          backgroundColor: theme.surfaceMuted,
-          borderWidth: StyleSheet.hairlineWidth * 2,
-          borderColor: theme.border,
-          marginBottom: spacing.base,
-        }}
-      >
-        {(['plans', 'library'] as TabKey[]).map((key) => {
-          const active = tab === key;
-          return (
-            <Pressable
-              key={key}
-              onPress={() => setTab(key)}
-              style={{
-                flex: 1,
-                paddingVertical: spacing.sm + 2,
-                borderRadius: radius.pill,
-                alignItems: 'center',
-                backgroundColor: active ? theme.primary : 'transparent',
-              }}
-            >
-              <Txt
-                variant="small"
-                color={active ? theme.onPrimary : theme.textSecondary}
-                style={{ fontWeight: '700' }}
-              >
-                {key === 'plans' ? 'My Plans' : 'Exercises'}
-              </Txt>
-            </Pressable>
-          );
-        })}
-      </View>
+      <SegmentedControl<TabKey>
+        options={[
+          { value: 'plans', label: 'My Plans', icon: 'clipboard-outline' },
+          { value: 'library', label: 'Exercises', icon: 'barbell-outline' },
+        ]}
+        value={tab}
+        onChange={setTab}
+      />
 
       {tab === 'plans' ? <PlansTab /> : <LibraryTab />}
     </Screen>
@@ -112,34 +84,31 @@ function PlansTab() {
     >
       {active.data && (
         <GlassCard
-          variant="strong"
-          glowColor={theme.primary}
+          variant="hero"
           style={{ marginBottom: spacing.base }}
           onPress={() => router.push(`/workout/active?id=${active.data!.id}`)}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 13,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.primarySoft,
-              }}
-            >
-              <Ionicons name="pulse" size={19} color={theme.primary} />
-            </View>
+            <IconWell icon="pulse" color="#A9C3F0" size={44} />
             <View style={{ flex: 1, marginLeft: spacing.md }}>
-              <Badge label="LIVE SESSION" color={theme.primary} size="sm" />
-              <Txt variant="bodyStrong" numberOfLines={1} style={{ marginTop: 3 }}>
+              <Txt variant="caption" color="#A9C3F0">
+                LIVE SESSION
+              </Txt>
+              <Txt variant="h4" numberOfLines={1} style={{ marginTop: 2 }}>
                 {active.data.title}
               </Txt>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={theme.textTertiary} />
+            <ArrowDisc />
           </View>
         </GlassCard>
       )}
+
+      <ActionRow>
+        <ActionTile icon="flash-outline" label="Free workout" highlighted onPress={() => router.push('/workout/start')} />
+        <ActionTile icon="add-circle-outline" label="New plan" onPress={() => router.push('/plans/create')} />
+        <ActionTile icon="time-outline" label="History" onPress={() => router.push('/workout/history')} />
+        <ActionTile icon="grid-outline" label="Categories" onPress={() => router.push('/exercises/categories')} />
+      </ActionRow>
 
       <View style={{ flexDirection: 'row', marginBottom: spacing.base }}>
         {[
@@ -155,25 +124,6 @@ function PlansTab() {
             onPress={() => setStatus(option.value)}
           />
         ))}
-      </View>
-
-      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.base }}>
-        <Button
-          title="Free workout"
-          icon="flash"
-          variant="glass"
-          size="sm"
-          style={{ flex: 1 }}
-          onPress={() => router.push('/workout/start')}
-        />
-        <Button
-          title="History"
-          icon="time-outline"
-          variant="glass"
-          size="sm"
-          style={{ flex: 1 }}
-          onPress={() => router.push('/workout/history')}
-        />
       </View>
 
       {plans.loading ? (
@@ -198,7 +148,7 @@ function PlansTab() {
             style={{ marginBottom: spacing.base }}
             onPress={() => router.push(`/plans/${plan.id}`)}
           >
-            <View style={{ height: 112 }}>
+            <View style={{ height: 150 }}>
               {plan.coverImageUrl ? (
                 <Image
                   source={{ uri: plan.coverImageUrl }}
@@ -213,7 +163,7 @@ function PlansTab() {
                 />
               )}
               <LinearGradient
-                colors={['rgba(7,10,14,0.2)', 'rgba(7,10,14,0.9)']}
+                colors={['rgba(10,22,48,0.1)', 'rgba(10,22,48,0.92)']}
                 style={StyleSheet.absoluteFill}
               />
 
@@ -223,22 +173,26 @@ function PlansTab() {
                     label={plan.status}
                     color={
                       plan.status === 'ACTIVE'
-                        ? '#5CD9AE'
+                        ? '#7EE2B8'
                         : plan.status === 'DRAFT'
-                          ? '#FFBF5E'
-                          : '#94A1B2'
+                          ? '#FFD08A'
+                          : '#C9D6EE'
                     }
+                    icon={plan.status === 'ACTIVE' ? 'radio-button-on' : undefined}
                   />
                   <Badge label={DIFFICULTY_LABELS[plan.difficultyLevel] || ''} color="#FFFFFF" />
                 </View>
 
-                <View>
-                  <Txt variant="h4" color="#FFFFFF" numberOfLines={1}>
-                    {plan.planName}
-                  </Txt>
-                  <Txt variant="caption" color="rgba(255,255,255,0.72)" style={{ marginTop: 2 }}>
-                    {plan.exerciseCount} exercises · {plan.trainingDays?.length ?? 0} training days
-                  </Txt>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                  <View style={{ flex: 1 }}>
+                    <Txt variant="h3" color="#FFFFFF" numberOfLines={1}>
+                      {plan.planName}
+                    </Txt>
+                    <Txt variant="caption" color="rgba(255,255,255,0.75)" style={{ marginTop: 2 }}>
+                      {plan.exerciseCount} exercises · {plan.trainingDays?.length ?? 0} training days
+                    </Txt>
+                  </View>
+                  <ArrowDisc />
                 </View>
               </View>
             </View>
@@ -247,8 +201,9 @@ function PlansTab() {
               <View
                 style={{
                   flexDirection: 'row',
-                  padding: spacing.md,
-                  gap: 5,
+                  justifyContent: 'space-between',
+                  paddingHorizontal: spacing.base,
+                  paddingVertical: spacing.md,
                 }}
               >
                 {['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(
@@ -258,16 +213,18 @@ function PlansTab() {
                       <View
                         key={day}
                         style={{
-                          flex: 1,
-                          paddingVertical: 6,
-                          borderRadius: radius.xs,
+                          width: 34,
+                          height: 34,
+                          borderRadius: 17,
                           alignItems: 'center',
-                          backgroundColor: trains ? theme.primarySoft : theme.surfaceMuted,
+                          justifyContent: 'center',
+                          backgroundColor: trains ? theme.primary : theme.surfaceMuted,
+                          boxShadow: trains ? theme.elevation.button : undefined,
                         }}
                       >
                         <Txt
                           variant="caption"
-                          color={trains ? theme.primary : theme.textTertiary}
+                          color={trains ? theme.onPrimary : theme.textTertiary}
                         >
                           {WEEK_DAY_LABELS[day][0]}
                         </Txt>
@@ -503,11 +460,11 @@ export function ExerciseRow({
       <View style={{ flexDirection: 'row', alignItems: 'center', padding: spacing.md }}>
         <View
           style={{
-            width: 58,
-            height: 58,
-            borderRadius: radius.md,
+            width: 62,
+            height: 62,
+            borderRadius: 18,
             overflow: 'hidden',
-            backgroundColor: theme.surfaceMuted,
+            backgroundColor: `${accent}14`,
           }}
         >
           {exercise.imageUrl ? (

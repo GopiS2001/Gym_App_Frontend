@@ -12,6 +12,15 @@ import { Txt } from './ui';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
+/**
+ * Pale fill behind an accent icon. Navy at low alpha reads as grey, so the
+ * primary colour uses the theme's pale blue instead.
+ */
+function softFill(accent: string, theme: ReturnType<typeof useTheme>['theme']): string {
+  if (accent === theme.primary) return theme.primarySoft;
+  return /^#[0-9a-f]{6}$/i.test(accent) ? `${accent}1A` : theme.surfaceMuted;
+}
+
 // ------------------------------------------------------------------ icon well
 
 /** A round pale well holding an icon (the reference's icon circles). */
@@ -37,7 +46,7 @@ export function IconWell({
         borderRadius: size / 2,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: filled ? accent : `${accent}1A`,
+        backgroundColor: filled ? accent : softFill(accent, theme),
         boxShadow: filled ? `0px 6px 14px -6px ${accent}aa, inset 0px 1px 0px rgba(255,255,255,0.25)` : undefined,
       }}
     >
@@ -84,9 +93,9 @@ export function ActionTile({
               borderRadius: 28,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: highlighted ? `${accent}1F` : theme.card,
+              backgroundColor: highlighted ? softFill(accent, theme) : theme.card,
               borderWidth: StyleSheet.hairlineWidth * 2,
-              borderColor: highlighted ? `${accent}33` : theme.glassBorder,
+              borderColor: highlighted ? (accent === theme.primary ? '#CCDCF6' : `${accent}33`) : theme.glassBorder,
               boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
             }}
           >
@@ -299,7 +308,7 @@ export function OptionTile({
           borderRadius: 17,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: selected ? 'rgba(255,255,255,0.18)' : `${accent}1A`,
+          backgroundColor: selected ? 'rgba(255,255,255,0.18)' : softFill(accent, theme),
           marginBottom: spacing.sm,
         }}
       >

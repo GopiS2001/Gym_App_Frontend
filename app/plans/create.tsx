@@ -7,14 +7,21 @@ import { useApi, useMutation } from '@/hooks/useApi';
 import { plansApi } from '@/services/endpoints';
 import { Screen, ScreenHeader } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
-import { Button, Chip, Field, LoadingState, Txt } from '@/components/ui';
+import { Button, Field, LoadingState, Txt } from '@/components/ui';
+import { FormSection, IconWell, Notice, OptionTile } from '@/components/premium';
 import { DIFFICULTY_LABELS } from '@/utils/format';
 
 const DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
 const STATUSES = [
-  { value: 'ACTIVE', label: 'Active' },
-  { value: 'DRAFT', label: 'Draft' },
+  { value: 'ACTIVE', label: 'Active', caption: 'Shows on your home screen', icon: 'flash' as const },
+  { value: 'DRAFT', label: 'Draft', caption: 'Keep building it first', icon: 'construct-outline' as const },
 ];
+
+const DIFFICULTY_ICONS: Record<string, keyof typeof import('@expo/vector-icons').Ionicons.glyphMap> = {
+  BEGINNER: 'leaf-outline',
+  INTERMEDIATE: 'flame-outline',
+  ADVANCED: 'trophy-outline',
+};
 
 export default function PlanFormScreen() {
   const { theme, spacing } = useTheme();
@@ -87,72 +94,79 @@ export default function PlanFormScreen() {
         showBack
       />
 
-      <Field
-        label="PLAN NAME *"
-        value={planName}
-        onChangeText={setPlanName}
-        placeholder="e.g. Push Pull Legs"
-        error={errors.planName}
-      />
-
-      <Field
-        label="DESCRIPTION"
-        value={description}
-        onChangeText={setDescription}
-        placeholder="What this plan is for and how it progresses"
-        multiline
-      />
-
-      <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm, marginLeft: 2 }}>
-        DIFFICULTY
-      </Txt>
-      <View style={{ flexDirection: 'row', marginBottom: spacing.base }}>
-        {DIFFICULTIES.map((level) => (
-          <Chip
-            key={level}
-            label={DIFFICULTY_LABELS[level]}
-            selected={difficulty === level}
-            onPress={() => setDifficulty(level)}
-          />
-        ))}
-      </View>
-
-      <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm, marginLeft: 2 }}>
-        STATUS
-      </Txt>
-      <View style={{ flexDirection: 'row', marginBottom: spacing.base }}>
-        {STATUSES.map((option) => (
-          <Chip
-            key={option.value}
-            label={option.label}
-            selected={status === option.value}
-            onPress={() => setStatus(option.value)}
-          />
-        ))}
-      </View>
-
-      {status === 'ACTIVE' && (
-        <GlassCard variant="subtle" style={{ marginBottom: spacing.base }}>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-            <Ionicons name="information-circle-outline" size={17} color={theme.textTertiary} />
-            <Txt variant="caption" color={theme.textTertiary} style={{ flex: 1, marginLeft: spacing.sm }}>
-              Only one plan can be active at a time. Any plan that is currently active will be
-              archived automatically.
+      {/* Live preview of the plan card */}
+      <GlassCard variant="hero" style={{ marginBottom: spacing.base }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <IconWell icon="clipboard" color="#A9C3F0" size={48} />
+          <View style={{ flex: 1, marginLeft: spacing.md }}>
+            <Txt variant="caption" color="#A9C3F0">
+              {status === 'ACTIVE' ? 'ACTIVE PLAN' : 'DRAFT'}
+            </Txt>
+            <Txt variant="h3" numberOfLines={1} style={{ marginTop: 2 }}>
+              {planName.trim() || 'Your new plan'}
+            </Txt>
+            <Txt variant="caption" color="#93A6C9" style={{ marginTop: 2 }}>
+              {DIFFICULTY_LABELS[difficulty]} · add exercises day by day next
             </Txt>
           </View>
-        </GlassCard>
-      )}
+        </View>
+      </GlassCard>
 
-      {save.error && (
-        <GlassCard style={{ marginBottom: spacing.base }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="alert-circle" size={17} color={theme.danger} />
-            <Txt variant="small" color={theme.danger} style={{ flex: 1, marginLeft: spacing.sm }}>
-              {save.error}
-            </Txt>
-          </View>
-        </GlassCard>
-      )}
+      <FormSection icon="create-outline" title="Plan details" subtitle="Name it and say what it's for">
+        <Field
+          label="PLAN NAME *"
+          value={planName}
+          onChangeText={setPlanName}
+          placeholder="e.g. Push Pull Legs"
+          error={errors.planName}
+        />
+
+        <Field
+          label="DESCRIPTION"
+          value={description}
+          onChangeText={setDescription}
+          placeholder="What this plan is for and how it progresses"
+          multiline
+          style={{ marginBottom: 0 }}
+        />
+      </FormSection>
+
+      <FormSection icon="speedometer-outline" title="Difficulty" subtitle="How hard the sessions are">
+        <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+          {DIFFICULTIES.map((level) => (
+            <OptionTile
+              key={level}
+              icon={DIFFICULTY_ICONS[level]}
+              label={DIFFICULTY_LABELS[level]}
+              selected={difficulty === level}
+              onPress={() => setDifficulty(level)}
+            />
+          ))}
+        </View>
+      </FormSection>
+
+      <FormSection icon="flag-outline" title="Status" subtitle="Active plans drive your daily workout">
+        <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+          {STATUSES.map((option) => (
+            <OptionTile
+              key={option.value}
+              icon={option.icon}
+              label={option.label}
+              caption={option.caption}
+              selected={status === option.value}
+              onPress={() => setStatus(option.value)}
+            />
+          ))}
+        </View>
+        {status === 'ACTIVE' && (
+          <Notice
+            text="Only one plan can be active at a time. Any plan that is currently active will be archived automatically."
+            style={{ marginTop: spacing.md, marginBottom: 0 }}
+          />
+        )}
+      </FormSection>
+
+      {save.error && <Notice tone="danger" text={save.error} />}
 
       <Button
         title={isEdit ? 'Save changes' : 'Create plan'}

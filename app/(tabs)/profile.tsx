@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { THEME_SWITCHING_ENABLED, useTheme } from '@/theme/ThemeProvider';
 import { heroTheme } from '@/theme/tokens';
+import { ActionRow, ActionTile, IconWell } from '@/components/premium';
 import { useStatusBarStyle } from '@/hooks/useStatusBarStyle';
 import { useAuth } from '@/store/AuthContext';
 import { useApi } from '@/hooks/useApi';
@@ -146,6 +147,14 @@ export default function ProfileScreen() {
         </View>
       </GlassCard>
 
+      {/* ------------------------------------------------- quick actions */}
+      <ActionRow>
+        <ActionTile icon="person-outline" label="Edit profile" highlighted onPress={() => router.push('/settings/edit-profile')} />
+        <ActionTile icon="flag-outline" label="Goals" onPress={() => router.push('/goals')} />
+        <ActionTile icon="stats-chart-outline" label="Reports" onPress={() => router.push('/progress/analytics')} />
+        <ActionTile icon="settings-outline" label="Settings" onPress={() => router.push('/settings')} />
+      </ActionRow>
+
       {/* ------------------------------------------------- lifetime stats */}
       <SectionHeader title="All-Time" />
       <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.md }}>
@@ -234,55 +243,67 @@ export default function ProfileScreen() {
       )}
 
       {/* -------------------------------------------------------- menu */}
-      <SectionHeader title="Manage" />
+      <SectionHeader title="More" />
       <GlassCard padded={false} style={{ marginBottom: spacing.base }}>
-        <MenuRow
-          icon="person-outline"
-          label="Edit profile"
-          onPress={() => router.push('/settings/edit-profile')}
-        />
-        <MenuRow icon="flag-outline" label="Fitness goals" onPress={() => router.push('/goals')} />
         <MenuRow
           icon="pricetags-outline"
           label="Goal types"
+          caption="Weight loss, muscle gain and more"
+          color={theme.sleep}
           onPress={() => router.push('/goals/types')}
         />
         <MenuRow
           icon="clipboard-outline"
           label="Workout plans"
+          caption="Your weekly training schedule"
+          color={theme.primary}
           onPress={() => router.push('/(tabs)/workout')}
         />
         <MenuRow
-          icon="list-outline"
+          icon="time-outline"
           label="Workout history"
+          caption="Every session you've logged"
+          color={theme.hydration}
           onPress={() => router.push('/workout/history')}
         />
         <MenuRow
           icon="grid-outline"
           label="Exercise categories"
+          caption="Organise your exercise library"
+          color={theme.streak}
           onPress={() => router.push('/exercises/categories')}
         />
         <MenuRow
-          icon="stats-chart-outline"
-          label="Reports & analytics"
-          onPress={() => router.push('/progress/analytics')}
-        />
-        <MenuRow
-          icon="settings-outline"
-          label="Settings & targets"
-          onPress={() => router.push('/settings')}
+          icon="alarm-outline"
+          label="Meal reminders"
+          caption="Nudges to eat and log"
+          color={theme.nutrition}
+          onPress={() => router.push('/nutrition/reminders')}
           last
         />
       </GlassCard>
 
-      <Button
-        title="Sign out"
-        icon="log-out-outline"
-        variant="glass"
-        fullWidth
+      <Pressable
         onPress={handleSignOut}
-        style={{ marginBottom: spacing.md }}
-      />
+        accessibilityRole="button"
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 52,
+          borderRadius: radius.pill,
+          backgroundColor: theme.card,
+          borderWidth: StyleSheet.hairlineWidth * 2,
+          borderColor: theme.glassBorder,
+          boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
+          marginBottom: spacing.md,
+        })}
+      >
+        <Ionicons name="log-out-outline" size={18} color={theme.danger} />
+        <Txt variant="bodyStrong" color={theme.danger} style={{ marginLeft: spacing.sm }}>
+          Sign out
+        </Txt>
+      </Pressable>
 
       <Txt variant="caption" color={theme.textTertiary} align="center">
         Personal Gym · v1.0.0
@@ -322,20 +343,10 @@ function StatCard({
   const { theme, spacing } = useTheme();
   return (
     <GlassCard style={{ flex: 1 }}>
-      <View
-        style={{
-          width: 32,
-          height: 32,
-          borderRadius: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: `${color}22`,
-          marginBottom: spacing.sm,
-        }}
-      >
-        <Ionicons name={icon} size={16} color={color} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing.sm }}>
+        <IconWell icon={icon} color={color} size={38} filled />
       </View>
-      <Txt variant="h3">{value}</Txt>
+      <Txt variant="h2">{value}</Txt>
       <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: 1 }}>
         {label}
       </Txt>
@@ -346,11 +357,15 @@ function StatCard({
 function MenuRow({
   icon,
   label,
+  caption,
+  color,
   onPress,
   last = false,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
+  caption?: string;
+  color?: string;
   onPress: () => void;
   last?: boolean;
 }) {
@@ -362,28 +377,35 @@ function MenuRow({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: spacing.base,
-        paddingVertical: spacing.base,
+        paddingVertical: spacing.md,
         borderBottomWidth: last ? 0 : StyleSheet.hairlineWidth,
         borderBottomColor: theme.divider,
         opacity: pressed ? 0.6 : 1,
       })}
     >
+      <IconWell icon={icon} color={color || theme.primary} size={40} />
+      <View style={{ flex: 1, marginLeft: spacing.md }}>
+        <Txt variant="body" style={{ fontWeight: '700' }}>
+          {label}
+        </Txt>
+        {caption && (
+          <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: 1 }}>
+            {caption}
+          </Txt>
+        )}
+      </View>
       <View
         style={{
-          width: 32,
-          height: 32,
-          borderRadius: 10,
+          width: 28,
+          height: 28,
+          borderRadius: 14,
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: theme.surfaceMuted,
         }}
       >
-        <Ionicons name={icon} size={16} color={theme.textSecondary} />
+        <Ionicons name="chevron-forward" size={15} color={theme.textSecondary} />
       </View>
-      <Txt variant="body" style={{ flex: 1, marginLeft: spacing.md, fontWeight: '600' }}>
-        {label}
-      </Txt>
-      <Ionicons name="chevron-forward" size={17} color={theme.textTertiary} />
     </Pressable>
   );
 }

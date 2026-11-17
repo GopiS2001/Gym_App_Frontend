@@ -9,6 +9,7 @@ import { Screen, ScreenHeader } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
 import { Button, Chip, EmptyState, Field, LoadingState, Txt } from '@/components/ui';
 import { useConfirm } from '@/components/Dialog';
+import { FieldLabel, FormSection, IconWell, Notice } from '@/components/premium';
 import type { Food, FoodLog } from '@/types/models';
 import { formatDate, todayIso } from '@/utils/format';
 import {
@@ -321,7 +322,8 @@ export default function AddFoodScreen() {
                   opacity: pressed ? 0.6 : 1,
                 })}
               >
-                <View style={{ flex: 1 }}>
+                <IconWell icon="nutrition-outline" color={theme.nutrition} size={40} />
+                <View style={{ flex: 1, marginLeft: spacing.md }}>
                   <Txt variant="small" style={{ fontWeight: '700' }}>
                     {f.name}
                   </Txt>
@@ -329,9 +331,18 @@ export default function AddFoodScreen() {
                     {servingLabel(f.servingSize, f.servingUnit)} · P {f.proteinG}g · C {f.carbsG}g · F {f.fatG}g
                   </Txt>
                 </View>
-                <Txt variant="small" color={theme.nutrition} style={{ fontWeight: '700' }}>
-                  {Math.round(f.calories)} kcal
-                </Txt>
+                <View
+                  style={{
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                    borderRadius: 999,
+                    backgroundColor: theme.nutritionSoft,
+                  }}
+                >
+                  <Txt variant="caption" color={theme.nutrition}>
+                    {Math.round(f.calories)} kcal
+                  </Txt>
+                </View>
               </Pressable>
             ))}
           </GlassCard>
@@ -360,13 +371,53 @@ export default function AddFoodScreen() {
         showBack
       />
 
+      {/* Chosen library food */}
+      {mode === 'library' && chosenName && (
+        <GlassCard variant="hero" style={{ marginBottom: spacing.base }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <IconWell icon="nutrition" color="#FF9A85" size={48} />
+            <View style={{ flex: 1, marginLeft: spacing.md }}>
+              <Txt variant="caption" color="#A9C3F0">
+                FROM YOUR FOOD LIBRARY
+              </Txt>
+              <Txt variant="h3" numberOfLines={1} style={{ marginTop: 2 }}>
+                {chosenName}
+              </Txt>
+              <Txt variant="caption" color="#93A6C9" style={{ marginTop: 2 }}>
+                {food
+                  ? `${Math.round(food.calories)} kcal per ${servingLabel(food.servingSize, food.servingUnit)}`
+                  : 'Logged from the Food Library'}
+              </Txt>
+            </View>
+            {!isEdit && (
+              <Pressable
+                onPress={() => {
+                  setFood(null);
+                  setSearch('');
+                }}
+                accessibilityRole="button"
+                style={({ pressed }) => ({
+                  paddingHorizontal: spacing.md,
+                  paddingVertical: 7,
+                  borderRadius: 999,
+                  backgroundColor: 'rgba(255,255,255,0.14)',
+                  transform: pressed ? [{ scale: 0.95 }] : undefined,
+                })}
+              >
+                <Txt variant="caption">Change</Txt>
+              </Pressable>
+            )}
+          </View>
+        </GlassCard>
+      )}
+
       {mode === 'manual' && !isEdit && (
         <Button
           title="Choose from Food Library instead"
-          variant="ghost"
+          variant="glass"
           icon="library-outline"
           fullWidth
-          style={{ marginBottom: spacing.md }}
+          style={{ marginBottom: spacing.base }}
           onPress={() => {
             setMode('library');
             setFood(null);
@@ -374,66 +425,29 @@ export default function AddFoodScreen() {
         />
       )}
 
-      {/* Chosen library food */}
-      {mode === 'library' && chosenName && (
-        <GlassCard style={{ marginBottom: spacing.base }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: radius.sm,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.nutritionSoft,
-                marginRight: spacing.md,
-              }}
-            >
-              <Ionicons name="nutrition-outline" size={20} color={theme.nutrition} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Txt variant="bodyStrong">{chosenName}</Txt>
-              <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: 2 }}>
-                {food
-                  ? `${Math.round(food.calories)} kcal per ${servingLabel(food.servingSize, food.servingUnit)}`
-                  : 'Logged from the Food Library'}
-              </Txt>
-            </View>
-            {!isEdit && (
-              <Button
-                title="Change"
-                variant="ghost"
-                size="sm"
-                onPress={() => {
-                  setFood(null);
-                  setSearch('');
-                }}
-              />
-            )}
-          </View>
-        </GlassCard>
-      )}
-
-      <GlassCard variant="strong" style={{ marginBottom: spacing.base }}>
-        {/* Date */}
-        <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm }}>
-          DATE
-        </Txt>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.base }}>
-          <Chip label="‹" onPress={() => setDate(shiftIsoDate(date, -1))} />
+      {/* When */}
+      <FormSection icon="calendar-outline" title="When" subtitle="Day and meal">
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 5,
+            borderRadius: 999,
+            backgroundColor: theme.surfaceMuted,
+            marginBottom: spacing.base,
+          }}
+        >
+          <RoundButton icon="chevron-back" onPress={() => setDate(shiftIsoDate(date, -1))} />
           <Txt variant="bodyStrong" align="center" style={{ flex: 1 }}>
             {date === today ? 'Today' : formatDate(`${date}T12:00:00`, 'long')}
           </Txt>
           <View style={{ opacity: date >= today ? 0.3 : 1 }}>
-            <Chip label="›" onPress={() => date < today && setDate(shiftIsoDate(date, 1))} />
+            <RoundButton icon="chevron-forward" onPress={() => date < today && setDate(shiftIsoDate(date, 1))} />
           </View>
         </View>
 
-        {/* Meal */}
-        <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm }}>
-          MEAL
-        </Txt>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.base }}>
+        <FieldLabel>MEAL</FieldLabel>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
           {MEAL_TYPES.map((t) => (
             <Chip
               key={t.value}
@@ -445,7 +459,15 @@ export default function AddFoodScreen() {
             />
           ))}
         </View>
+      </FormSection>
 
+      {/* What and how much */}
+      <FormSection
+        icon="restaurant-outline"
+        title={mode === 'manual' ? 'Food & nutrition' : 'Amount'}
+        subtitle={mode === 'manual' ? 'Enter what the label or recipe says' : 'How much you had'}
+        color={theme.nutrition}
+      >
         {mode === 'manual' && (
           <Field
             label="FOOD NAME *"
@@ -459,7 +481,6 @@ export default function AddFoodScreen() {
           />
         )}
 
-        {/* Quantity */}
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
           <Field
             label="QUANTITY *"
@@ -499,34 +520,33 @@ export default function AddFoodScreen() {
           </View>
         )}
 
-        {/* Nutrition: calculated preview, or typed in for manual entries */}
         {mode === 'library' ? (
-          <View
-            style={{
-              padding: spacing.base,
-              borderRadius: radius.md,
-              backgroundColor: theme.nutritionSoft,
-              marginBottom: spacing.base,
-            }}
-          >
-            <Txt variant="caption" color={theme.textTertiary}>
+          <GlassCard variant="tint" noBorder style={{ boxShadow: undefined }}>
+            <Txt variant="caption" color={theme.textSecondary}>
               YOU'LL LOG (ESTIMATE)
             </Txt>
             {preview ? (
               <>
-                <Txt variant="h2" color={theme.nutrition} style={{ marginTop: 4 }}>
-                  {preview.calories} kcal
-                </Txt>
-                <Txt variant="small" color={theme.textSecondary} style={{ marginTop: 2 }}>
-                  Protein {preview.proteinG} g · Carbs {preview.carbsG} g · Fat {preview.fatG} g
-                </Txt>
+                <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 4 }}>
+                  <Txt variant="numericLarge" color={theme.nutrition}>
+                    {preview.calories}
+                  </Txt>
+                  <Txt variant="bodyStrong" color={theme.textSecondary} style={{ marginLeft: 6 }}>
+                    kcal
+                  </Txt>
+                </View>
+                <View style={{ flexDirection: 'row', marginTop: spacing.md, gap: spacing.sm }}>
+                  <MacroPill label="Protein" value={preview.proteinG} color={theme.primary} />
+                  <MacroPill label="Carbs" value={preview.carbsG} color={theme.streak} />
+                  <MacroPill label="Fat" value={preview.fatG} color={theme.sleep} />
+                </View>
               </>
             ) : (
               <Txt variant="small" color={theme.textTertiary} style={{ marginTop: 4 }}>
                 Enter an amount to see calories and macros.
               </Txt>
             )}
-          </View>
+          </GlassCard>
         ) : (
           <>
             <Field
@@ -552,7 +572,13 @@ export default function AddFoodScreen() {
                 onPress={() => setSaveToLibrary((v) => !v)}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: saveToLibrary }}
-                style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.base }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: spacing.md,
+                  borderRadius: radius.md,
+                  backgroundColor: saveToLibrary ? theme.primarySoft : theme.surfaceMuted,
+                }}
               >
                 <Ionicons
                   name={saveToLibrary ? 'checkbox' : 'square-outline'}
@@ -568,13 +594,16 @@ export default function AddFoodScreen() {
         )}
 
         {errors.food && (
-          <Txt variant="small" color={theme.danger} style={{ marginBottom: spacing.md }}>
+          <Txt variant="small" color={theme.danger} style={{ marginTop: spacing.md }}>
             {errors.food}
           </Txt>
         )}
+      </FormSection>
 
+      {/* Optional details */}
+      <FormSection icon="time-outline" title="Details" subtitle="Optional">
         <Field
-          label="TIME (OPTIONAL)"
+          label="TIME"
           value={time}
           onChangeText={(t) => {
             setTime(t);
@@ -592,44 +621,87 @@ export default function AddFoodScreen() {
           onChangeText={setNotes}
           placeholder="Where it was from, how it was cooked…"
           multiline
+          style={{ marginBottom: 0 }}
         />
+      </FormSection>
 
-        {save.error && (
-          <Txt variant="small" color={theme.danger} style={{ marginBottom: spacing.md }}>
-            {save.error}
-          </Txt>
-        )}
+      {save.error && <Notice tone="danger" text={save.error} />}
 
-        <Button
-          title={isEdit ? 'Save changes' : 'Log food'}
-          icon="checkmark"
-          fullWidth
-          size="lg"
-          loading={save.loading}
-          onPress={handleSave}
-        />
+      <Button
+        title={isEdit ? 'Save changes' : 'Log food'}
+        icon="checkmark"
+        fullWidth
+        size="lg"
+        loading={save.loading}
+        onPress={handleSave}
+      />
 
-        {isEdit && (
-          <>
-            {remove.error && (
-              <Txt variant="small" color={theme.danger} style={{ marginTop: spacing.md }}>
-                {remove.error}
-              </Txt>
-            )}
-            <View style={{ marginTop: spacing.md }}>
-              <Button
-                title="Delete entry"
-                icon="trash-outline"
-                variant="danger"
-                fullWidth
-                size="lg"
-                loading={remove.loading}
-                onPress={handleDelete}
-              />
-            </View>
-          </>
-        )}
-      </GlassCard>
+      {isEdit && (
+        <>
+          {remove.error && <Notice tone="danger" text={remove.error} style={{ marginTop: spacing.md }} />}
+          <View style={{ marginTop: spacing.md }}>
+            <Button
+              title="Delete entry"
+              icon="trash-outline"
+              variant="danger"
+              fullWidth
+              size="lg"
+              loading={remove.loading}
+              onPress={handleDelete}
+            />
+          </View>
+        </>
+      )}
     </Screen>
+  );
+}
+
+/** Small round raised chevron used by the date bar. */
+function RoundButton({ icon, onPress }: { icon: 'chevron-back' | 'chevron-forward'; onPress: () => void }) {
+  const { theme } = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      hitSlop={6}
+      accessibilityRole="button"
+      accessibilityLabel={icon === 'chevron-back' ? 'Previous day' : 'Next day'}
+      style={({ pressed }) => ({
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.card,
+        boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
+      })}
+    >
+      <Ionicons name={icon} size={17} color={theme.primary} />
+    </Pressable>
+  );
+}
+
+/** One macro in the estimate panel. */
+function MacroPill({ label, value, color }: { label: string; value: number; color: string }) {
+  const { theme, spacing, radius } = useTheme();
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        borderRadius: radius.md,
+        backgroundColor: theme.card,
+      }}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: color, marginRight: 5 }} />
+        <Txt variant="caption" color={theme.textTertiary}>
+          {label}
+        </Txt>
+      </View>
+      <Txt variant="bodyStrong" style={{ marginTop: 2 }}>
+        {value} g
+      </Txt>
+    </View>
   );
 }

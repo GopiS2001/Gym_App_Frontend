@@ -25,6 +25,8 @@ import { getErrorMessage } from '@/services/api';
 import { ActivityRings, BarChart, ProgressRing } from '@/components/charts';
 import { formatDate, formatTime, todayIso } from '@/utils/format';
 import { MEAL_TYPES, mealIcon, shiftIsoDate } from '@/utils/nutrition';
+import { ActionRow, ActionTile, IconWell } from '@/components/premium';
+import { heroTheme } from '@/theme/tokens';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -122,34 +124,12 @@ export default function NutritionScreen() {
       />
 
       {/* ----------------------------------------------------- shortcuts */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.base }}>
-        {(
-          [
-            { icon: 'library-outline', label: 'Food Library', to: '/nutrition/library' },
-            { icon: 'calendar-outline', label: 'History', to: '/nutrition/history' },
-            { icon: 'alarm-outline', label: 'Reminders', to: '/nutrition/reminders' },
-          ] as const
-        ).map((s) => (
-          <Pressable
-            key={s.to}
-            onPress={() => router.push(s.to)}
-            accessibilityRole="button"
-            style={({ pressed }) => ({
-              flex: 1,
-              alignItems: 'center',
-              paddingVertical: spacing.md,
-              borderRadius: radius.md,
-              backgroundColor: theme.surfaceMuted,
-              opacity: pressed ? 0.6 : 1,
-            })}
-          >
-            <Ionicons name={s.icon} size={19} color={theme.nutrition} />
-            <Txt variant="caption" style={{ marginTop: 4, fontWeight: '700' }}>
-              {s.label}
-            </Txt>
-          </Pressable>
-        ))}
-      </View>
+      <ActionRow>
+        <ActionTile icon="add" label="Add food" highlighted color={theme.nutrition} onPress={() => addFood()} />
+        <ActionTile icon="library-outline" label="Library" onPress={() => router.push('/nutrition/library')} />
+        <ActionTile icon="calendar-outline" label="History" onPress={() => router.push('/nutrition/history')} />
+        <ActionTile icon="alarm-outline" label="Reminders" onPress={() => router.push('/nutrition/reminders')} />
+      </ActionRow>
 
       {/* -------------------------------------------------- date selector */}
       <View
@@ -157,59 +137,57 @@ export default function NutritionScreen() {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          padding: 6,
+          borderRadius: radius.pill,
+          backgroundColor: theme.card,
+          borderWidth: StyleSheet.hairlineWidth * 2,
+          borderColor: theme.glassBorder,
+          boxShadow: theme.elevation.card,
           marginBottom: spacing.base,
         }}
       >
-        <IconButton
-          icon="chevron-back"
-          size={38}
-          onPress={() => setDate(shiftIsoDate(date, -1))}
-        />
-        <Pressable onPress={() => setDate(today)} disabled={isToday} accessibilityRole="button">
-          <Txt variant="h4" align="center">
-            {dayLabel(date, today)}
-          </Txt>
+        <DayButton icon="chevron-back" onPress={() => setDate(shiftIsoDate(date, -1))} />
+        <Pressable onPress={() => setDate(today)} disabled={isToday} accessibilityRole="button" style={{ alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons name="calendar" size={15} color={theme.primary} style={{ marginRight: 6 }} />
+            <Txt variant="h4">{dayLabel(date, today)}</Txt>
+          </View>
           {!isToday && (
-            <Txt variant="caption" color={theme.primary} align="center" style={{ marginTop: 2 }}>
+            <Txt variant="caption" color={theme.primary} style={{ marginTop: 1 }}>
               Back to today
             </Txt>
           )}
         </Pressable>
         <View style={{ opacity: isToday ? 0.3 : 1 }}>
-          <IconButton
-            icon="chevron-forward"
-            size={38}
-            onPress={() => !isToday && setDate(shiftIsoDate(date, 1))}
-          />
+          <DayButton icon="chevron-forward" onPress={() => !isToday && setDate(shiftIsoDate(date, 1))} />
         </View>
       </View>
 
       {/* --------------------------------------------------- calorie ring */}
-      <GlassCard variant="strong" style={{ marginBottom: spacing.base }}>
+      <GlassCard variant="hero" style={{ marginBottom: spacing.base }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <ProgressRing
             percentage={n.progress.calories}
             size={124}
             strokeWidth={12}
-            color={theme.nutrition}
+            color={heroTheme.nutrition}
           >
             <Txt variant="h2">{Math.round(n.totals.calories)}</Txt>
-            <Txt variant="caption" color={theme.textTertiary}>
+            <Txt variant="caption" color={heroTheme.textTertiary}>
               of {n.targets.calories}
             </Txt>
           </ProgressRing>
 
           <View style={{ flex: 1, marginLeft: spacing.lg }}>
-            <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm }}>
-              CALORIES REMAINING
+            <Txt variant="caption" color={heroTheme.textTertiary} style={{ marginBottom: spacing.sm }}>
+              {n.remaining.calories >= 0 ? 'CALORIES LEFT' : 'OVER TARGET'}
             </Txt>
             <Txt
               variant="h2"
-              color={n.remaining.calories >= 0 ? theme.primary : theme.danger}
+              color={n.remaining.calories >= 0 ? heroTheme.primary : heroTheme.danger}
               style={{ marginBottom: spacing.md }}
             >
               {Math.round(Math.abs(n.remaining.calories))}
-              {n.remaining.calories < 0 ? ' over' : ''}
             </Txt>
 
             <MacroRow
@@ -217,21 +195,21 @@ export default function NutritionScreen() {
               value={n.totals.proteinG}
               target={n.targets.proteinG}
               percentage={n.progress.proteinG}
-              color={theme.primary}
+              color={heroTheme.primary}
             />
             <MacroRow
               label="Carbs"
               value={n.totals.carbsG}
               target={n.targets.carbsG}
               percentage={n.progress.carbsG}
-              color={theme.streak}
+              color={heroTheme.streak}
             />
             <MacroRow
               label="Fat"
               value={n.totals.fatG}
               target={n.targets.fatG}
               percentage={n.progress.fatG}
-              color={theme.sleep}
+              color={heroTheme.sleep}
             />
           </View>
         </View>
@@ -239,7 +217,7 @@ export default function NutritionScreen() {
 
       {/* ------------------------------------------------------ hydration */}
       {water.data && (
-        <GlassCard style={{ marginBottom: spacing.base }}>
+        <GlassCard variant="tint" style={{ marginBottom: spacing.base }}>
           <View
             style={{
               flexDirection: 'row',
@@ -249,8 +227,8 @@ export default function NutritionScreen() {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name="water" size={17} color={theme.hydration} />
-              <Txt variant="h4" style={{ marginLeft: 6 }}>
+              <IconWell icon="water" color={theme.hydration} size={32} />
+              <Txt variant="h4" style={{ marginLeft: spacing.sm }}>
                 Water
               </Txt>
               {water.data.goalReached && (
@@ -285,12 +263,11 @@ export default function NutritionScreen() {
                 style={({ pressed }) => ({
                   flex: 1,
                   paddingVertical: spacing.md,
-                  borderRadius: radius.md,
+                  borderRadius: radius.pill,
                   alignItems: 'center',
-                  backgroundColor: theme.hydrationSoft,
-                  borderWidth: StyleSheet.hairlineWidth * 2,
-                  borderColor: `${theme.hydration}33`,
-                  opacity: pressed ? 0.6 : 1,
+                  backgroundColor: theme.card,
+                  boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
+                  transform: pressed ? [{ scale: 0.95 }] : undefined,
                 })}
               >
                 <Txt variant="caption" color={theme.hydration} style={{ fontWeight: '800' }}>
@@ -300,14 +277,14 @@ export default function NutritionScreen() {
             ))}
             <Pressable
               onPress={undoWater}
+              accessibilityLabel="Undo last water entry"
               style={({ pressed }) => ({
-                paddingHorizontal: spacing.base,
-                paddingVertical: spacing.md,
-                borderRadius: radius.md,
+                width: 42,
+                borderRadius: radius.pill,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: theme.surfaceMuted,
-                opacity: pressed ? 0.6 : 1,
+                backgroundColor: theme.card,
+                boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
               })}
             >
               <Ionicons name="arrow-undo" size={15} color={theme.textTertiary} />
@@ -394,18 +371,8 @@ export default function NutritionScreen() {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View
-                    style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 10,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: theme.nutritionSoft,
-                      marginRight: spacing.sm,
-                    }}
-                  >
-                    <Ionicons name={mealIcon(meal.mealType)} size={15} color={theme.nutrition} />
+                  <View style={{ marginRight: spacing.sm }}>
+                    <IconWell icon={mealIcon(meal.mealType)} color={theme.nutrition} size={34} filled />
                   </View>
                   <Txt variant="h4">{meal.label}</Txt>
                 </View>
@@ -451,18 +418,18 @@ export default function NutritionScreen() {
                 >
                   <View
                     style={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: radius.sm,
+                      width: 44,
+                      height: 44,
+                      borderRadius: 22,
                       overflow: 'hidden',
-                      backgroundColor: theme.surfaceMuted,
+                      backgroundColor: theme.nutritionSoft,
                     }}
                   >
                     {item.imageUrl ? (
                       <Image source={{ uri: item.imageUrl }} style={{ flex: 1 }} contentFit="cover" />
                     ) : (
                       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <Ionicons name="fast-food-outline" size={17} color={theme.textTertiary} />
+                        <Ionicons name="fast-food-outline" size={18} color={theme.nutrition} />
                       </View>
                     )}
                   </View>
@@ -529,6 +496,30 @@ export default function NutritionScreen() {
         Tap an item to edit · Tap the bin to delete · Values are estimates
       </Txt>
     </Screen>
+  );
+}
+
+/** Round raised chevron button for the date bar. */
+function DayButton({ icon, onPress }: { icon: 'chevron-back' | 'chevron-forward'; onPress: () => void }) {
+  const { theme } = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      hitSlop={6}
+      accessibilityRole="button"
+      accessibilityLabel={icon === 'chevron-back' ? 'Previous day' : 'Next day'}
+      style={({ pressed }) => ({
+        width: 38,
+        height: 38,
+        borderRadius: 19,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.primarySoft,
+        transform: pressed ? [{ scale: 0.92 }] : undefined,
+      })}
+    >
+      <Ionicons name={icon} size={18} color={theme.primary} />
+    </Pressable>
   );
 }
 
