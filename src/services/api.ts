@@ -254,7 +254,16 @@ async function refreshAccessToken(): Promise<string | null> {
 }
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Every successful add / edit / delete confirms itself with a toast.
+    const message = toastForWrite(
+      response.config?.method,
+      response.config?.url,
+      (response.data as Partial<ApiEnvelope<unknown>> | undefined)?.message,
+    );
+    if (message) showToast(message);
+    return response;
+  },
   async (error: AxiosError<any>) => {
     const original = error.config as InternalAxiosRequestConfig & {
       _retried?: boolean;
