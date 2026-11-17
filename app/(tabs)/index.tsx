@@ -10,6 +10,7 @@ import { useApi } from '@/hooks/useApi';
 import { analyticsApi, waterApi } from '@/services/endpoints';
 import { Screen } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
+import { heroTheme } from '@/theme/tokens';
 import {
   Badge,
   Button,
@@ -151,17 +152,17 @@ export default function HomeScreen() {
       )}
 
       {/* -------------------------------------------------- today's rings */}
-      <GlassCard variant="strong" style={{ marginBottom: spacing.base }}>
+      <GlassCard variant="hero" style={{ marginBottom: spacing.base }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.base }}>
           <View>
             <Txt variant="h4">Today's Progress</Txt>
-            <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: 2 }}>
+            <Txt variant="caption" color={heroTheme.textTertiary} style={{ marginTop: 2 }}>
               {formatDate(d.todaysProgress.date, 'long')}
             </Txt>
           </View>
           <Badge
             label={d.todaysProgress.workoutCompleted ? 'TRAINED' : 'PENDING'}
-            color={d.todaysProgress.workoutCompleted ? theme.success : theme.textTertiary}
+            color={d.todaysProgress.workoutCompleted ? heroTheme.success : heroTheme.textTertiary}
           />
         </View>
 
@@ -174,16 +175,16 @@ export default function HomeScreen() {
               rings={[
                 {
                   percentage: d.todaysProgress.workoutCompleted ? 100 : 0,
-                  color: theme.primary,
+                  color: heroTheme.primary,
                 },
                 {
                   percentage: Math.min(
                     100,
                     (d.todaysProgress.caloriesConsumed / Math.max(1, d.todaysProgress.calorieTarget)) * 100,
                   ),
-                  color: theme.nutrition,
+                  color: heroTheme.nutrition,
                 },
-                { percentage: d.todaysProgress.waterPercentage, color: theme.hydration },
+                { percentage: d.todaysProgress.waterPercentage, color: heroTheme.hydration },
               ]}
             />
             <View
@@ -203,7 +204,7 @@ export default function HomeScreen() {
 
           <View style={{ flex: 1, marginLeft: spacing.lg, gap: spacing.md }}>
             <MetricRow
-              color={theme.primary}
+              color={heroTheme.primary}
               icon="barbell"
               label="Workout"
               value={
@@ -213,13 +214,13 @@ export default function HomeScreen() {
               }
             />
             <MetricRow
-              color={theme.nutrition}
+              color={heroTheme.nutrition}
               icon="flame"
               label="Calories"
               value={`${Math.round(d.todaysProgress.caloriesConsumed)} / ${d.todaysProgress.calorieTarget}`}
             />
             <MetricRow
-              color={theme.hydration}
+              color={heroTheme.hydration}
               icon="water"
               label="Water"
               value={`${(d.todaysProgress.waterMl / 1000).toFixed(1)} / ${(

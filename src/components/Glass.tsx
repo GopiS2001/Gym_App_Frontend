@@ -9,14 +9,18 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@/theme/ThemeProvider';
+import { ThemeScope, useTheme } from '@/theme/ThemeProvider';
+import { heroTheme } from '@/theme/tokens';
 
 interface GlassCardProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   intensity?: number;
-  /** `strong` reads as a raised panel, `subtle` as an inline chip. */
-  variant?: 'default' | 'strong' | 'subtle' | 'outline';
+  /**
+   * `strong` reads as a raised panel, `subtle` as an inline well, `hero` as
+   * a deep-navy feature panel whose content is re-themed light-on-navy.
+   */
+  variant?: 'default' | 'strong' | 'subtle' | 'outline' | 'hero';
   radius?: number;
   padded?: boolean;
   onPress?: () => void;
@@ -26,10 +30,12 @@ interface GlassCardProps {
 }
 
 /**
- * The app's primary surface.
+ * The app's primary surface: a solid card lifted off the backdrop by layered
+ * shadows (see `theme.elevation`), so it reads as a physical, 3D tile. Pressing
+ * it sinks it towards the page.
  *
- * Blur is genuinely expensive on low-end Android, so there it falls back to a
- * translucent fill that reads the same at a glance while staying smooth.
+ * In dark mode (currently switched off) the translucent glass look returns,
+ * with blur on iOS.
  */
 export function GlassCard({
   children,
@@ -42,34 +48,55 @@ export function GlassCard({
   glowColor,
   noBorder = false,
 }: GlassCardProps) {
-  const { theme, radius, spacing, shadows } = useTheme();
+  const { theme, radius, spacing } = useTheme();
+  const isHero = variant === 'hero';
+  const dark = theme.mode === 'dark';
 
   const fill =
     variant === 'strong'
       ? theme.glassStrong
       : variant === 'subtle'
         ? theme.surfaceMuted
-        : variant === 'outline'
+        : variant === 'outline' || isHero
           ? 'transparent'
           : theme.glass;
 
   const cardRadius = radiusProp ?? radius.xl;
-  const useBlur = Platform.OS === 'ios' && variant !== 'outline';
+  const useBlur = dark && !isHero && Platform.OS === 'ios' && variant !== 'outline';
+  const flat = variant === 'subtle' || variant === 'outline';
 
-  const containerStyle: StyleProp<ViewStyle> = [
-    {
-      borderRadius: cardRadius,
-      overflow: 'hidden',
-      borderWidth: noBorder ? 0 : StyleSheet.hairlineWidth * 2,
-      borderColor: variant === 'subtle' ? theme.divider : theme.glassBorder,
-      backgroundColor: useBlur ? 'transparent' : fill,
-    },
-    cardShadow(glowColor, shadows),
-    style,
-  ];
+  const shadow = flat
+    ? undefined
+    : glowColor
+      ? `0px 14px 30px -10px ${withAlpha(glowColor, 0.45)}, 0px 1px 2px rgba(15,31,61,0.06)`
+      : isHero || variant === 'strong'
+        ? theme.elevation.raised
+        : theme.elevation.card;
 
+  const containerStyle: ViewStyle = {
+    borderRadius: cardRadius,
+    borderWidth: noBorder || isHero ? 0 : StyleSheet.hairlineWidth * 2,
+    borderColor: variant === 'subtle' ? theme.divider : theme.glassBorder,
+    backgroundColor: useBlur ? 'transparent' : fill,
+    boxShadow: shadow,
+  };
+
+  // The shadow lives on the outer view; the inner view clips the content to
+  // the rounded corners (clipping on the outer view would cut the shadow off).
   const inner = (
-    <>
+    <View style={{ borderRadius: cardRadius, overflow: 'hidden' }}>
+      {isHero && (
+        <>
+          <LinearGradient
+            colors={HERO_GRADIENT}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          {/* A soft light bloom in the corner gives the panel volume. */}
+          <View pointerEvents="none" style={styles.heroBloom} />
+        </>
+      )}
       {useBlur && (
         <BlurView
           intensity={intensity ?? theme.blurIntensity}
@@ -79,18 +106,10 @@ export function GlassCard({
           <View style={[StyleSheet.absoluteFill, { backgroundColor: fill }]} />
         </BlurView>
       )}
-      {/* A one-pixel light edge along the top sells the glass. */}
-      {variant !== 'outline' && !noBorder && (
-        <LinearGradient
-          colors={[theme.glassHighlight, 'transparent']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.topHighlight}
-          pointerEvents="none"
-        />
-      )}
-      <View style={padded ? { padding: spacing.base } : undefined}>{children}</View>
-    </>
+      <View style={padded ? { padding: spacing.base } : undefined}>
+        {isHero ? <ThemeScope theme={heroTheme}>{children}</ThemeScope> : children}
+      </View>
+    </View>
   );
 
   if (onPress) {
@@ -99,7 +118,11 @@ export function GlassCard({
         onPress={onPress}
         style={({ pressed }) => [
           containerStyle,
-          pressed && { opacity: 0.82, transform: [{ scale: 0.985 }] },
+          pressed && {
+            transform: [{ scale: 0.98 }, { translateY: 1 }],
+            boxShadow: flat ? undefined : theme.elevation.pressed,
+          },
+          style,
         ]}
       >
         {inner}
@@ -107,28 +130,18 @@ export function GlassCard({
     );
   }
 
-  return <View style={containerStyle}>{inner}</View>;
+  return <View style={[containerStyle, style]}>{inner}</View>;
 }
 
-/**
- * Android `elevation` paints its shadow beneath the view, so it shows through
- * a translucent glass fill as a grey slab with a lighter inner rectangle (how
- * visible depends on the OEM's shadow renderer). `boxShadow` is drawn only
- * outside the border box, so it stays invisible through the fill.
- */
-function cardShadow(
-  glowColor: string | undefined,
-  shadows: ReturnType<typeof useTheme>['shadows'],
-): ViewStyle {
-  if (Platform.OS !== 'android') {
-    return glowColor ? shadows.glow(glowColor) : shadows.md;
-  }
-  const color =
-    glowColor && /^#[0-9a-f]{6}$/i.test(glowColor) ? `${glowColor}73` : glowColor;
-  return {
-    elevation: 0,
-    boxShadow: color ? `0px 8px 20px ${color}` : '0px 8px 20px rgba(0,0,0,0.14)',
-  };
+const HERO_GRADIENT = ['#2B4A80', '#16294D', '#0A1630'] as const;
+
+/** `#RRGGBB` plus an alpha; other colour formats are returned unchanged. */
+function withAlpha(color: string, alpha: number): string {
+  if (!/^#[0-9a-f]{6}$/i.test(color)) return color;
+  const a = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, '0');
+  return `${color}${a}`;
 }
 
 /** Full-bleed gradient backdrop that every screen sits on. */
@@ -183,12 +196,13 @@ export function GlowOrb({
 }
 
 const styles = StyleSheet.create({
-  topHighlight: {
+  heroBloom: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 1.5,
-    opacity: 0.6,
+    top: -80,
+    right: -60,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(169,195,240,0.07)',
   },
 });

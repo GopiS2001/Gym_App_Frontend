@@ -3,7 +3,6 @@ import {
   Animated,
   Dimensions,
   Easing,
-  ImageBackground,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -11,7 +10,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,9 +24,9 @@ const { height: SCREEN_H } = Dimensions.get('window');
 /**
  * Welcome / sign-in screen.
  *
- * Layout follows the glassmorphism welcome-screen reference: a full-bleed
- * photograph, a dark scrim for legibility, a brand mark and oversized
- * headline up top, and a frosted card carrying the form at the bottom.
+ * Layout follows the premium light reference: a deep-navy header carrying
+ * the brand and a two-tone headline over a faded training photo, and a white
+ * 3D card holding the form that overlaps the header's rounded bottom edge.
  */
 export default function LoginScreen() {
   const { theme, spacing, radius } = useTheme();
@@ -107,32 +106,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#07090C' }}>
-      <ImageBackground
-        source={require('../../assets/images/auth-background.jpg')}
-        style={StyleSheet.absoluteFill}
-        resizeMode="cover"
-      >
-        {/* Scrim: keeps the headline readable over any part of the photo. */}
-        <LinearGradient
-          colors={[
-            'rgba(7,9,12,0.35)',
-            'rgba(7,9,12,0.55)',
-            'rgba(7,9,12,0.92)',
-            '#07090C',
-          ]}
-          locations={[0, 0.35, 0.72, 1]}
-          style={StyleSheet.absoluteFill}
-        />
-        {/* A mint wash in the corner ties the photo to the app accent. */}
-        <LinearGradient
-          colors={['rgba(47,198,149,0.22)', 'transparent']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0.2, y: 0.6 }}
-          style={StyleSheet.absoluteFill}
-        />
-      </ImageBackground>
-
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -143,264 +117,259 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
-          {/* ---------------------------------------------------- top bar */}
+          {/* ------------------------------------------------ navy header */}
           <View
             style={{
+              minHeight: SCREEN_H * 0.46,
+              borderBottomLeftRadius: 36,
+              borderBottomRightRadius: 36,
+              overflow: 'hidden',
               paddingTop: insets.top + spacing.md,
               paddingHorizontal: spacing.lg,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              paddingBottom: spacing.huge,
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 11,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(255,255,255,0.12)',
-                  borderWidth: StyleSheet.hairlineWidth * 2,
-                  borderColor: 'rgba(255,255,255,0.22)',
-                }}
-              >
-                <Ionicons name="barbell" size={18} color="#FFFFFF" />
-              </View>
-              <Txt variant="bodyStrong" color="#FFFFFF" style={{ marginLeft: spacing.sm }}>
-                Personal Gym
-              </Txt>
-            </View>
+            <LinearGradient
+              colors={['#2B4A80', '#16294D', '#0A1630']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            {/* The training photo, faded into the navy for texture. */}
+            <Image
+              source={require('../../assets/images/auth-background.jpg')}
+              style={[StyleSheet.absoluteFill, { opacity: 0.22 }]}
+              contentFit="cover"
+            />
+            <LinearGradient
+              colors={['rgba(10,22,48,0.1)', 'rgba(10,22,48,0.85)']}
+              style={StyleSheet.absoluteFill}
+            />
+            {/* Soft light bloom for depth. */}
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: -90,
+                right: -70,
+                width: 240,
+                height: 240,
+                borderRadius: 120,
+                backgroundColor: 'rgba(169,195,240,0.07)',
+              }}
+            />
 
-            <Pressable onLongPress={() => setShowDebug((v) => !v)} hitSlop={12}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingHorizontal: spacing.md,
-                  paddingVertical: 6,
-                  borderRadius: radius.pill,
-                  backgroundColor: 'rgba(255,255,255,0.10)',
-                  borderWidth: StyleSheet.hairlineWidth * 2,
-                  borderColor: 'rgba(255,255,255,0.18)',
-                }}
-              >
-                <View
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 3,
-                    backgroundColor: '#5CD9AE',
-                    marginRight: 6,
-                  }}
-                />
-                <Txt variant="caption" color="rgba(255,255,255,0.86)">
-                  Private
-                </Txt>
-              </View>
-            </Pressable>
-          </View>
-
-          {/* --------------------------------------------------- headline */}
-          <Animated.View
-            style={{
-              paddingHorizontal: spacing.lg,
-              marginTop: SCREEN_H * 0.07,
-              opacity: fade,
-              transform: [{ translateY: slide }],
-            }}
-          >
+            {/* Top bar */}
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                alignSelf: 'flex-start',
-                paddingHorizontal: spacing.md,
-                paddingVertical: 5,
-                borderRadius: radius.pill,
-                backgroundColor: 'rgba(92,217,174,0.18)',
-                borderWidth: StyleSheet.hairlineWidth * 2,
-                borderColor: 'rgba(92,217,174,0.35)',
-                marginBottom: spacing.base,
+                justifyContent: 'space-between',
               }}
             >
-              <Ionicons name="flame" size={12} color="#5CD9AE" />
-              <Txt variant="caption" color="#8FE8C8" style={{ marginLeft: 5 }}>
-                YOUR TRAINING, TRACKED
-              </Txt>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(255,255,255,0.12)',
+                    borderWidth: StyleSheet.hairlineWidth * 2,
+                    borderColor: 'rgba(255,255,255,0.2)',
+                    boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.25)',
+                  }}
+                >
+                  <Ionicons name="barbell" size={19} color="#FFFFFF" />
+                </View>
+                <Txt variant="bodyStrong" color="#FFFFFF" style={{ marginLeft: spacing.sm }}>
+                  Personal Gym
+                </Txt>
+              </View>
+
+              <Pressable onLongPress={() => setShowDebug((v) => !v)} hitSlop={12}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: spacing.md,
+                    paddingVertical: 6,
+                    borderRadius: radius.pill,
+                    backgroundColor: 'rgba(255,255,255,0.10)',
+                    borderWidth: StyleSheet.hairlineWidth * 2,
+                    borderColor: 'rgba(255,255,255,0.18)',
+                  }}
+                >
+                  <Ionicons name="lock-closed" size={11} color="#A9C3F0" style={{ marginRight: 5 }} />
+                  <Txt variant="caption" color="rgba(255,255,255,0.86)">
+                    Private
+                  </Txt>
+                </View>
+              </Pressable>
             </View>
 
-            <Txt variant="display" color="#FFFFFF" style={{ marginBottom: spacing.sm }}>
-              Welcome back
-            </Txt>
-            <Txt
-              variant="body"
-              color="rgba(255,255,255,0.68)"
-              style={{ maxWidth: 300, lineHeight: 23 }}
+            {/* Headline */}
+            <Animated.View
+              style={{
+                marginTop: SCREEN_H * 0.07,
+                opacity: fade,
+                transform: [{ translateY: slide }],
+              }}
             >
-              Sign in to pick up your plan, log every set and watch the numbers move.
-            </Txt>
-          </Animated.View>
+              <Txt variant="caption" color="#A9C3F0" style={{ marginBottom: spacing.sm, letterSpacing: 1.2 }}>
+                YOUR TRAINING, TRACKED
+              </Txt>
+              <Txt variant="display" color="#FFFFFF">
+                Welcome
+              </Txt>
+              <Txt variant="display" color="#A9C3F0" style={{ marginBottom: spacing.md }}>
+                back
+              </Txt>
+              <Txt
+                variant="body"
+                color="rgba(255,255,255,0.7)"
+                style={{ maxWidth: 300, lineHeight: 22 }}
+              >
+                Sign in to pick up your plan, log every set and watch the numbers move.
+              </Txt>
+            </Animated.View>
+          </View>
 
-          <View style={{ flex: 1, minHeight: spacing.xl }} />
-
-          {/* ------------------------------------------------- glass form */}
+          {/* ------------------------------------------------- form card */}
           <Animated.View
             style={{
               opacity: fade,
               transform: [{ translateY: slide }],
               marginHorizontal: spacing.base,
+              marginTop: -spacing.xxxl,
               marginBottom: insets.bottom + spacing.lg,
             }}
           >
             <View
               style={{
                 borderRadius: radius.xxl,
-                overflow: 'hidden',
+                backgroundColor: theme.card,
                 borderWidth: StyleSheet.hairlineWidth * 2,
-                borderColor: 'rgba(255,255,255,0.16)',
-                backgroundColor:
-                  Platform.OS === 'ios' ? 'rgba(255,255,255,0.06)' : 'rgba(18,24,31,0.88)',
-                shadowColor: '#000',
-                shadowOpacity: 0.4,
-                shadowRadius: 30,
-                shadowOffset: { width: 0, height: 16 },
-                elevation: 16,
+                borderColor: theme.glassBorder,
+                boxShadow: theme.elevation.raised,
+                padding: spacing.lg,
               }}
             >
-              {Platform.OS === 'ios' && (
-                <BlurView intensity={48} tint="dark" style={StyleSheet.absoluteFill} />
-              )}
-              <LinearGradient
-                colors={['rgba(255,255,255,0.22)', 'transparent']}
-                style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1.5 }}
+              <Txt variant="h3" style={{ marginBottom: spacing.xs }}>
+                Sign in
+              </Txt>
+              <Txt variant="small" color={theme.textTertiary} style={{ marginBottom: spacing.lg }}>
+                This account is private to you.
+              </Txt>
+
+              <Field
+                label="EMAIL"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+                }}
+                placeholder="you@example.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                icon="mail-outline"
+                error={fieldErrors.email}
               />
 
-              <View style={{ padding: spacing.lg }}>
-                <Txt variant="h3" color="#FFFFFF" style={{ marginBottom: spacing.xs }}>
-                  Sign in
-                </Txt>
-                <Txt
-                  variant="small"
-                  color="rgba(255,255,255,0.55)"
-                  style={{ marginBottom: spacing.lg }}
+              <Field
+                label="PASSWORD"
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  if (fieldErrors.password)
+                    setFieldErrors((p) => ({ ...p, password: undefined }));
+                }}
+                placeholder="Enter your password"
+                secureTextEntry
+                autoCapitalize="none"
+                icon="lock-closed-outline"
+                error={fieldErrors.password}
+                onSubmitEditing={handleSignIn}
+              />
+
+              {!!error && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                    padding: spacing.md,
+                    borderRadius: radius.md,
+                    backgroundColor: theme.dangerSoft,
+                    marginBottom: spacing.base,
+                  }}
                 >
-                  This account is private to you.
-                </Txt>
+                  <Ionicons
+                    name="alert-circle"
+                    size={17}
+                    color={theme.danger}
+                    style={{ marginRight: spacing.sm, marginTop: 1 }}
+                  />
+                  <Txt variant="small" color={theme.danger} style={{ flex: 1 }}>
+                    {error}
+                  </Txt>
+                </View>
+              )}
 
-                <Field
-                  label="EMAIL"
-                  value={email}
-                  onChangeText={(text) => {
-                    setEmail(text);
-                    if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+              {waking && !error && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: spacing.md,
+                    borderRadius: radius.md,
+                    backgroundColor: theme.primarySoft,
+                    marginBottom: spacing.base,
                   }}
-                  placeholder="you@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  icon="mail-outline"
-                  error={fieldErrors.email}
-                />
+                >
+                  <Ionicons
+                    name="time-outline"
+                    size={17}
+                    color={theme.primary}
+                    style={{ marginRight: spacing.sm }}
+                  />
+                  <Txt variant="small" color={theme.primary} style={{ flex: 1 }}>
+                    Waking up the server… this can take up to a minute.
+                  </Txt>
+                </View>
+              )}
 
-                <Field
-                  label="PASSWORD"
-                  value={password}
-                  onChangeText={(text) => {
-                    setPassword(text);
-                    if (fieldErrors.password)
-                      setFieldErrors((p) => ({ ...p, password: undefined }));
+              <Button
+                title="Sign in"
+                onPress={handleSignIn}
+                loading={submitting}
+                size="lg"
+                fullWidth
+                iconRight="arrow-forward"
+              />
+
+              {showDebug && (
+                <View
+                  style={{
+                    marginTop: spacing.base,
+                    padding: spacing.md,
+                    borderRadius: radius.sm,
+                    backgroundColor: theme.surfaceMuted,
                   }}
-                  placeholder="Enter your password"
-                  secureTextEntry
-                  autoCapitalize="none"
-                  icon="lock-closed-outline"
-                  error={fieldErrors.password}
-                  onSubmitEditing={handleSignIn}
-                />
-
-                {!!error && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'flex-start',
-                      padding: spacing.md,
-                      borderRadius: radius.md,
-                      backgroundColor: 'rgba(255,107,114,0.14)',
-                      borderWidth: StyleSheet.hairlineWidth * 2,
-                      borderColor: 'rgba(255,107,114,0.3)',
-                      marginBottom: spacing.base,
-                    }}
-                  >
-                    <Ionicons
-                      name="alert-circle"
-                      size={17}
-                      color="#FF8A8F"
-                      style={{ marginRight: spacing.sm, marginTop: 1 }}
-                    />
-                    <Txt variant="small" color="#FFB3B6" style={{ flex: 1 }}>
-                      {error}
-                    </Txt>
-                  </View>
-                )}
-
-                {waking && !error && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      padding: spacing.md,
-                      borderRadius: radius.md,
-                      backgroundColor: 'rgba(62,207,142,0.12)',
-                      borderWidth: StyleSheet.hairlineWidth * 2,
-                      borderColor: 'rgba(62,207,142,0.3)',
-                      marginBottom: spacing.base,
-                    }}
-                  >
-                    <Ionicons
-                      name="time-outline"
-                      size={17}
-                      color="#6EE7B7"
-                      style={{ marginRight: spacing.sm }}
-                    />
-                    <Txt variant="small" color="#A7F3D0" style={{ flex: 1 }}>
-                      Waking up the server… this can take up to a minute.
-                    </Txt>
-                  </View>
-                )}
-
-                <Button
-                  title="Sign in"
-                  onPress={handleSignIn}
-                  loading={submitting}
-                  size="lg"
-                  fullWidth
-                  iconRight="arrow-forward"
-                />
-
-                {showDebug && (
-                  <View
-                    style={{
-                      marginTop: spacing.base,
-                      padding: spacing.md,
-                      borderRadius: radius.sm,
-                      backgroundColor: 'rgba(255,255,255,0.07)',
-                    }}
-                  >
-                    <Txt variant="caption" color="rgba(255,255,255,0.5)">
-                      API endpoint
-                    </Txt>
-                    <Txt variant="small" color="rgba(255,255,255,0.8)" style={{ marginTop: 2 }}>
-                      {API_BASE_URL}
-                    </Txt>
-                  </View>
-                )}
-              </View>
+                >
+                  <Txt variant="caption" color={theme.textTertiary}>
+                    API endpoint
+                  </Txt>
+                  <Txt variant="small" color={theme.textSecondary} style={{ marginTop: 2 }}>
+                    {API_BASE_URL}
+                  </Txt>
+                </View>
+              )}
             </View>
 
             <Txt
               variant="caption"
-              color="rgba(255,255,255,0.35)"
+              color={theme.textTertiary}
               align="center"
               style={{ marginTop: spacing.base }}
             >

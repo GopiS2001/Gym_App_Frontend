@@ -198,17 +198,22 @@ export function Button({
             colors={theme.primaryGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={[
-              base,
-              {
-                shadowColor: theme.primary,
-                shadowOpacity: 0.45,
-                shadowRadius: 16,
-                shadowOffset: { width: 0, height: 6 },
-                elevation: 8,
-              },
-            ]}
+            style={[base, { boxShadow: theme.elevation.button }]}
           >
+            {/* Light across the top half makes the pill look rounded. */}
+            <LinearGradient
+              colors={['rgba(255,255,255,0.16)', 'rgba(255,255,255,0)']}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '55%',
+                borderTopLeftRadius: radius.pill,
+                borderTopRightRadius: radius.pill,
+              }}
+              pointerEvents="none"
+            />
             {content}
           </LinearGradient>
         </Pressable>
@@ -219,11 +224,15 @@ export function Button({
   const backgrounds: Record<string, ViewStyle> = {
     secondary: { backgroundColor: theme.primarySoft },
     ghost: { backgroundColor: 'transparent' },
-    danger: { backgroundColor: theme.danger },
+    danger: {
+      backgroundColor: theme.danger,
+      boxShadow: `0px 10px 20px -8px ${theme.danger}99, inset 0px 1px 0px rgba(255,255,255,0.22)`,
+    },
     glass: {
       backgroundColor: theme.glassStrong,
       borderWidth: StyleSheet.hairlineWidth * 2,
       borderColor: theme.glassBorder,
+      boxShadow: theme.elevation.card,
     },
   };
 
@@ -296,6 +305,7 @@ export function Field({
           alignItems: multiline ? 'flex-start' : 'center',
           backgroundColor: theme.inputBackground,
           borderRadius: multiline ? radius.md : radius.pill,
+          boxShadow: focused ? `0px 0px 0px 3px ${theme.primarySoft}` : 'inset 0px 1px 2px rgba(15,31,61,0.06)',
           borderWidth: StyleSheet.hairlineWidth * 2,
           borderColor: error
             ? theme.danger
@@ -394,11 +404,15 @@ export function Chip({
         paddingHorizontal: spacing.base,
         paddingVertical: spacing.sm + 1,
         borderRadius: radius.pill,
-        backgroundColor: selected ? accent : theme.surfaceMuted,
+        backgroundColor: selected ? accent : theme.card,
         borderWidth: StyleSheet.hairlineWidth * 2,
-        borderColor: selected ? accent : theme.border,
+        borderColor: selected ? accent : theme.glassBorder,
+        boxShadow: selected
+          ? `0px 6px 14px -6px ${accent}aa, inset 0px 1px 0px rgba(255,255,255,0.18)`
+          : '0px 1px 2px rgba(15,31,61,0.06), 0px 4px 10px -4px rgba(15,31,61,0.10)',
         marginRight: spacing.sm,
         opacity: pressed ? 0.75 : 1,
+        transform: pressed ? [{ scale: 0.97 }] : undefined,
       })}
     >
       {icon && (
@@ -549,12 +563,12 @@ export function StatTile({
         {icon && (
           <View
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: 10,
+              width: 34,
+              height: 34,
+              borderRadius: 17,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: `${accent}22`,
+              backgroundColor: `${accent}1A`,
               marginRight: spacing.sm,
             }}
           >
@@ -635,11 +649,11 @@ export function EmptyState({
           borderRadius: 38,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: theme.surfaceMuted,
+          backgroundColor: theme.primarySoft,
           marginBottom: spacing.base,
         }}
       >
-        <Ionicons name={icon} size={32} color={theme.textTertiary} />
+        <Ionicons name={icon} size={32} color={theme.primary} />
       </View>
       <Txt variant="h4" align="center" style={{ marginBottom: spacing.xs }}>
         {title}
@@ -825,11 +839,18 @@ export function IconButton({
           variant === 'glass'
             ? theme.glassStrong
             : variant === 'solid'
-              ? `${accent}22`
+              ? `${accent}1A`
               : 'transparent',
         borderWidth: variant === 'glass' ? StyleSheet.hairlineWidth * 2 : 0,
         borderColor: theme.glassBorder,
-        opacity: pressed ? 0.7 : 1,
+        boxShadow:
+          variant === 'glass'
+            ? pressed
+              ? theme.elevation.pressed
+              : theme.elevation.card
+            : undefined,
+        opacity: pressed ? 0.85 : 1,
+        transform: pressed ? [{ scale: 0.95 }] : undefined,
       })}
     >
       <Ionicons name={icon} size={size * 0.44} color={accent} />

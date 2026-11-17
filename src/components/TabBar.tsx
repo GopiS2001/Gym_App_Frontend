@@ -16,8 +16,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 /** Height of the floating bar itself (excluding the gap below it). */
 export const TAB_BAR_HEIGHT = 66;
 const SIDE_GAP = 14;
-const PILL_W = 46;
-const PILL_H = 32;
+const PILL_W = 50;
+const PILL_H = 34;
 
 /** Distance from the bottom of the window to the bottom of the bar. */
 export function tabBarBottomGap(insets: EdgeInsets) {
@@ -67,7 +67,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTab
   if (keyboardOpen) return null;
 
   const dark = theme.mode === 'dark';
-  const fill = dark ? 'rgba(16,22,29,0.94)' : 'rgba(255,255,255,0.95)';
+  const fill = dark ? 'rgba(16,22,29,0.94)' : theme.tabBarBackground;
 
   return (
     <View
@@ -78,15 +78,16 @@ export function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTab
         style={[
           styles.bar,
           {
-            borderColor: dark ? 'rgba(255,255,255,0.10)' : 'rgba(14,26,28,0.06)',
-            backgroundColor: Platform.OS === 'ios' ? 'transparent' : fill,
+            borderColor: dark ? 'rgba(255,255,255,0.10)' : 'rgba(15,31,61,0.05)',
+            backgroundColor: Platform.OS === 'ios' && dark ? 'transparent' : fill,
+            // Floats off the page: contact shadow, wide soft shadow, lit top edge.
             boxShadow: dark
               ? '0px 14px 32px rgba(0,0,0,0.55)'
-              : '0px 14px 32px rgba(15,40,35,0.16)',
+              : '0px 2px 6px rgba(15,31,61,0.06), 0px 18px 38px -10px rgba(15,31,61,0.24), inset 0px 1px 0px rgba(255,255,255,1)',
           },
         ]}
       >
-        {Platform.OS === 'ios' && (
+        {Platform.OS === 'ios' && dark && (
           <BlurView intensity={80} tint={theme.blurTint} style={StyleSheet.absoluteFill}>
             <View style={[StyleSheet.absoluteFill, { backgroundColor: theme.tabBarBackground }]} />
           </BlurView>
@@ -109,7 +110,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTab
               style={[
                 styles.pill,
                 pillStyle,
-                { boxShadow: `0px 6px 14px ${theme.primary}59` },
+                { boxShadow: theme.elevation.button },
               ]}
             >
               <LinearGradient
@@ -117,6 +118,10 @@ export function TabBar({ state, descriptors, emitter, navigateToTab }: BottomTab
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
+              />
+              <LinearGradient
+                colors={['rgba(255,255,255,0.18)', 'rgba(255,255,255,0)']}
+                style={styles.pillSheen}
               />
             </Animated.View>
           )}
@@ -226,7 +231,7 @@ const styles = StyleSheet.create({
   },
   bar: {
     height: TAB_BAR_HEIGHT,
-    borderRadius: 26,
+    borderRadius: 30,
     borderWidth: StyleSheet.hairlineWidth * 2,
     overflow: 'hidden',
     paddingHorizontal: 6,
@@ -251,6 +256,13 @@ const styles = StyleSheet.create({
     height: PILL_H,
     borderRadius: PILL_H / 2,
     overflow: 'hidden',
+  },
+  pillSheen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: PILL_H / 2,
   },
   item: {
     flex: 1,

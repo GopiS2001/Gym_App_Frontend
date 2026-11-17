@@ -20,6 +20,13 @@ import {
 
 export type ThemePreference = 'SYSTEM' | 'LIGHT' | 'DARK';
 
+/**
+ * The app currently ships in light mode only, and the Auto / Light / Dark
+ * pickers are hidden. Everything behind them still works: the preference is
+ * still saved, and setting this to true brings dark mode and the pickers back.
+ */
+export const THEME_SWITCHING_ENABLED = false;
+
 const STORAGE_KEY = '@personal_gym/theme_preference';
 
 interface ThemeContextValue {
@@ -37,7 +44,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useColorScheme();
-  const [preference, setPreferenceState] = useState<ThemePreference>('SYSTEM');
+  const [preference, setPreferenceState] = useState<ThemePreference>('LIGHT');
 
   // Restore the saved preference before the first paint settles, so the app
   // does not flash the wrong theme.
@@ -57,7 +64,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const isDark =
-    preference === 'DARK' || (preference === 'SYSTEM' && systemScheme !== 'light');
+    THEME_SWITCHING_ENABLED &&
+    (preference === 'DARK' || (preference === 'SYSTEM' && systemScheme !== 'light'));
 
   const value = useMemo<ThemeContextValue>(
     () => ({
@@ -82,4 +90,17 @@ export function useTheme(): ThemeContextValue {
     throw new Error('useTheme must be used inside a ThemeProvider');
   }
   return ctx;
+}
+
+/**
+ * Re-themes a subtree, e.g. the content of a navy hero panel, so every
+ * component inside picks colours that read on that surface.
+ */
+export function ThemeScope({ theme, children }: { theme: AppTheme; children: React.ReactNode }) {
+  const parent = useTheme();
+  const value = useMemo(
+    () => ({ ...parent, theme, isDark: theme.mode === 'dark' }),
+    [parent, theme],
+  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

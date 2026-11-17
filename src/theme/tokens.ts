@@ -5,9 +5,9 @@
  * Screens never hard-code a colour — they read from the theme so light and
  * dark mode both work from one definition.
  *
- * The visual language is glassmorphism: translucent surfaces layered over a
- * photographic or gradient backdrop, hairline borders that catch the light,
- * and soft coloured glows instead of hard drop shadows.
+ * The visual language is soft 3D: solid white cards that float on a cool
+ * grey-blue backdrop with layered, navy-tinted shadows and a light top edge,
+ * deep navy hero panels and buttons, and pale-blue icon wells.
  */
 
 export const palette = {
@@ -41,6 +41,18 @@ export const palette = {
   violet300: '#C4B5FD',
   violet400: '#A78BFA',
   violet500: '#8B5CF6',
+
+  // Deep navy and pale blue: the premium light theme's main colours.
+  navy950: '#0A1630',
+  navy900: '#0F1F3D',
+  navy800: '#16294D',
+  navy700: '#1F3866',
+  navy600: '#2B4A80',
+  blue400: '#7FA6E8',
+  blue300: '#A9C3F0',
+  blue200: '#CCDCF6',
+  blue100: '#E3ECFA',
+  blue50: '#F1F5FD',
 
   // Neutrals tuned slightly cool so the glass reads as glass.
   ink950: '#070A0E',
@@ -125,6 +137,17 @@ export interface AppTheme {
   inputPlaceholder: string;
   tabBarBackground: string;
   tabBarInactive: string;
+
+  /**
+   * Layered CSS box-shadows that give surfaces their 3D depth: a tight
+   * contact shadow, a wide soft one, and a light inset edge along the top.
+   */
+  elevation: {
+    card: string;
+    raised: string;
+    button: string;
+    pressed: string;
+  };
 }
 
 export const darkTheme: AppTheme = {
@@ -180,61 +203,105 @@ export const darkTheme: AppTheme = {
   inputPlaceholder: palette.ink400,
   tabBarBackground: 'rgba(11,15,20,0.80)',
   tabBarInactive: palette.ink400,
+
+  elevation: {
+    card: '0px 1px 2px rgba(0,0,0,0.35), 0px 12px 28px rgba(0,0,0,0.35), inset 0px 1px 0px rgba(255,255,255,0.08)',
+    raised: '0px 2px 4px rgba(0,0,0,0.4), 0px 18px 40px rgba(0,0,0,0.45), inset 0px 1px 0px rgba(255,255,255,0.10)',
+    button: '0px 10px 22px -8px rgba(0,0,0,0.6), inset 0px 1px 0px rgba(255,255,255,0.22)',
+    pressed: '0px 1px 2px rgba(0,0,0,0.35), inset 0px 1px 0px rgba(255,255,255,0.06)',
+  },
 };
 
 export const lightTheme: AppTheme = {
   mode: 'light',
 
-  background: '#F4F7FB',
-  backgroundGradient: ['#FFFFFF', '#F1F6FA', '#E9F5F0'] as const,
-  backdropOverlay: 'rgba(255,255,255,0.55)',
+  background: '#EEF1F6',
+  backgroundGradient: ['#F8FAFD', '#F0F3F8', '#E7EDF5'] as const,
+  backdropOverlay: 'rgba(244,247,251,0.6)',
 
-  glass: 'rgba(255,255,255,0.62)',
-  glassStrong: 'rgba(255,255,255,0.80)',
-  glassBorder: 'rgba(255,255,255,0.90)',
-  glassHighlight: 'rgba(255,255,255,1)',
+  // Cards are solid white now; depth comes from `elevation`, not blur.
+  glass: '#FFFFFF',
+  glassStrong: '#FFFFFF',
+  glassBorder: 'rgba(15,31,61,0.06)',
+  glassHighlight: '#FFFFFF',
   blurTint: 'light',
   blurIntensity: 55,
 
-  card: 'rgba(255,255,255,0.92)',
+  card: '#FFFFFF',
   cardElevated: '#FFFFFF',
-  surfaceMuted: 'rgba(14,26,28,0.04)',
-  border: 'rgba(14,26,28,0.09)',
-  divider: 'rgba(14,26,28,0.07)',
+  surfaceMuted: '#F1F4F9',
+  border: 'rgba(15,31,61,0.09)',
+  divider: 'rgba(15,31,61,0.07)',
 
-  text: '#0E1A1C',
-  textSecondary: '#495A68',
-  textTertiary: '#7C8B99',
+  text: palette.navy900,
+  textSecondary: '#4A5A75',
+  textTertiary: '#8693A8',
   textInverse: '#FFFFFF',
   textOnAccent: '#FFFFFF',
 
-  primary: palette.mint600,
-  primarySoft: 'rgba(13,142,102,0.12)',
-  primaryGradient: [palette.mint400, palette.mint600] as const,
+  primary: palette.navy800,
+  primarySoft: palette.blue100,
+  primaryGradient: [palette.navy600, palette.navy950] as const,
   onPrimary: '#FFFFFF',
 
-  nutrition: palette.coral600,
-  nutritionSoft: 'rgba(219,78,55,0.11)',
-  hydration: palette.sky500,
-  hydrationSoft: 'rgba(43,149,220,0.11)',
-  streak: '#D98A07',
-  streakSoft: 'rgba(245,165,36,0.13)',
-  sleep: palette.violet500,
-  sleepSoft: 'rgba(139,92,246,0.11)',
+  nutrition: '#E2634C',
+  nutritionSoft: '#FCE9E5',
+  hydration: '#3B7DDD',
+  hydrationSoft: '#E2EDFB',
+  streak: '#DD8A0E',
+  streakSoft: '#FDF1DD',
+  sleep: '#6E56DB',
+  sleepSoft: '#ECE8FB',
 
-  danger: '#D93F46',
-  dangerSoft: 'rgba(217,63,70,0.10)',
-  success: palette.mint600,
-  warning: '#D98A07',
+  danger: '#D9434A',
+  dangerSoft: '#FBE6E7',
+  success: '#1E9E6A',
+  warning: '#DD8A0E',
 
-  shadowColor: '#0E1A1C',
-  glowColor: palette.mint400,
-  skeleton: 'rgba(14,26,28,0.07)',
-  inputBackground: 'rgba(255,255,255,0.75)',
-  inputBorder: 'rgba(14,26,28,0.10)',
-  inputPlaceholder: '#9AA7B4',
-  tabBarBackground: 'rgba(255,255,255,0.84)',
-  tabBarInactive: '#8695A3',
+  shadowColor: palette.navy900,
+  glowColor: palette.navy600,
+  skeleton: 'rgba(15,31,61,0.07)',
+  inputBackground: '#F4F7FB',
+  inputBorder: 'rgba(15,31,61,0.08)',
+  inputPlaceholder: '#9AA6B8',
+  tabBarBackground: '#FFFFFF',
+  tabBarInactive: '#8A97AC',
+
+  elevation: {
+    card: '0px 1px 2px rgba(15,31,61,0.05), 0px 10px 24px -6px rgba(15,31,61,0.12), inset 0px 1px 0px rgba(255,255,255,1)',
+    raised: '0px 2px 4px rgba(15,31,61,0.06), 0px 22px 44px -12px rgba(15,31,61,0.26), inset 0px 1px 0px rgba(255,255,255,0.14)',
+    button: '0px 12px 22px -8px rgba(10,22,48,0.55), inset 0px 1px 0px rgba(255,255,255,0.20), inset 0px -2px 0px rgba(0,0,0,0.18)',
+    pressed: '0px 1px 2px rgba(15,31,61,0.08), inset 0px 1px 0px rgba(255,255,255,0.6)',
+  },
+};
+
+/**
+ * The deep-navy surface used for hero panels (like "Today's Progress").
+ * Wrapping content in it with `ThemeScope` turns every text, badge and
+ * ring inside light-on-navy without each screen choosing colours.
+ */
+export const heroTheme: AppTheme = {
+  ...darkTheme,
+  background: palette.navy900,
+  glass: 'rgba(255,255,255,0.08)',
+  glassStrong: 'rgba(255,255,255,0.12)',
+  glassBorder: 'rgba(255,255,255,0.12)',
+  card: 'rgba(255,255,255,0.08)',
+  surfaceMuted: 'rgba(255,255,255,0.08)',
+  border: 'rgba(255,255,255,0.14)',
+  divider: 'rgba(255,255,255,0.10)',
+  text: '#FFFFFF',
+  textSecondary: '#C9D6EE',
+  textTertiary: '#93A6C9',
+  primary: palette.blue300,
+  primarySoft: 'rgba(169,195,240,0.18)',
+  primaryGradient: [palette.blue200, palette.blue400] as const,
+  onPrimary: palette.navy950,
+  nutrition: '#FF9A85',
+  nutritionSoft: 'rgba(255,154,133,0.18)',
+  hydration: '#7CC4FF',
+  hydrationSoft: 'rgba(124,196,255,0.18)',
+  success: '#5FD7A4',
 };
 
 export const spacing = {
@@ -297,35 +364,35 @@ export const typography = {
   numericLarge: { fontSize: 44, lineHeight: 48, fontWeight: '800' as const, letterSpacing: -1.5 },
 } as const;
 
-/** Soft, wide shadows — glass should float, not sit on a hard edge. */
+/** Soft, wide, navy-tinted shadows (iOS-style props; see theme.elevation). */
 export const shadows = {
   none: {},
   sm: {
-    shadowColor: '#000',
+    shadowColor: '#0F1F3D',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.09,
+    shadowOpacity: 0.07,
     shadowRadius: 8,
     elevation: 2,
   },
   md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 20,
+    shadowColor: '#0F1F3D',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.11,
+    shadowRadius: 22,
     elevation: 6,
   },
   lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.2,
-    shadowRadius: 32,
+    shadowColor: '#0F1F3D',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.18,
+    shadowRadius: 34,
     elevation: 12,
   },
   glow: (color: string) => ({
     shadowColor: color,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.45,
-    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 22,
     elevation: 10,
   }),
 } as const;

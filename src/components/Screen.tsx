@@ -73,8 +73,18 @@ export function Screen({
     <View style={{ flex: 1, backgroundColor: theme.background, overflow: 'hidden' }}>
       <ScreenGradient>
         {/* Ambient colour behind the glass. */}
-        <GlowOrb color={theme.primary} size={300} opacity={0.1} style={{ top: -120, right: -90 }} />
-        <GlowOrb color={theme.hydration} size={260} opacity={0.07} style={{ top: 260, left: -120 }} />
+        <GlowOrb
+          color={theme.mode === 'dark' ? theme.primary : '#A9C3F0'}
+          size={320}
+          opacity={theme.mode === 'dark' ? 0.1 : 0.22}
+          style={{ top: -140, right: -110 }}
+        />
+        <GlowOrb
+          color={theme.mode === 'dark' ? theme.hydration : '#CCDCF6'}
+          size={260}
+          opacity={theme.mode === 'dark' ? 0.07 : 0.3}
+          style={{ top: 300, left: -140 }}
+        />
 
         {scroll ? (
           <ScrollView
@@ -133,17 +143,20 @@ export function ScreenHeader({
         <Pressable
           onPress={() => (onBack ? onBack() : router.back())}
           hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
           style={({ pressed }) => ({
-            width: 40,
-            height: 40,
-            borderRadius: radius.md,
+            width: 42,
+            height: 42,
+            borderRadius: 21,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: theme.glassStrong,
             borderWidth: StyleSheet.hairlineWidth * 2,
             borderColor: theme.glassBorder,
+            boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
+            transform: pressed ? [{ scale: 0.95 }] : undefined,
             marginRight: spacing.md,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Ionicons name="chevron-back" size={20} color={theme.text} />
