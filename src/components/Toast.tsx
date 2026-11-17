@@ -3,15 +3,10 @@ import { Animated, Easing, Platform, Pressable, StyleSheet, View } from 'react-n
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeProvider';
+import { onToast, type ToastItem, type ToastTone } from '@/services/toast';
 import { Txt } from './ui';
 
-export type ToastTone = 'success' | 'danger' | 'info';
-
-interface ToastItem {
-  id: number;
-  message: string;
-  tone: ToastTone;
-}
+export { showToast } from '@/services/toast';
 
 const ICONS: Record<ToastTone, keyof typeof Ionicons.glyphMap> = {
   success: 'checkmark-circle',
