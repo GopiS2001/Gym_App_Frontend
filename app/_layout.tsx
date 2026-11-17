@@ -83,6 +83,8 @@ export default function RootLayout() {
               <RootNavigator />
             </AuthProvider>
           </DialogProvider>
+          {/* Save / update / delete confirmations, above every screen. */}
+          <ToastHost />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
