@@ -164,19 +164,24 @@ export default function SettingsScreen() {
       />
 
       {/* ------------------------------------------------------- theme */}
-      <SectionHeader title="Appearance" icon="color-palette-outline" />
-      <GlassCard style={{ marginBottom: spacing.base }}>
-        <View style={{ flexDirection: 'row' }}>
-          {(['SYSTEM', 'LIGHT', 'DARK'] as const).map((mode) => (
-            <Chip
-              key={mode}
-              label={mode === 'SYSTEM' ? 'Auto' : mode === 'LIGHT' ? 'Light' : 'Dark'}
-              selected={draft.theme === mode}
-              onPress={() => patch({ theme: mode })}
-            />
-          ))}
-        </View>
-      </GlassCard>
+      {/* Hidden while the app is light-only; see THEME_SWITCHING_ENABLED. */}
+      {THEME_SWITCHING_ENABLED && (
+        <>
+          <SectionHeader title="Appearance" icon="color-palette-outline" />
+          <GlassCard style={{ marginBottom: spacing.base }}>
+            <View style={{ flexDirection: 'row' }}>
+              {(['SYSTEM', 'LIGHT', 'DARK'] as const).map((mode) => (
+                <Chip
+                  key={mode}
+                  label={mode === 'SYSTEM' ? 'Auto' : mode === 'LIGHT' ? 'Light' : 'Dark'}
+                  selected={draft.theme === mode}
+                  onPress={() => patch({ theme: mode })}
+                />
+              ))}
+            </View>
+          </GlassCard>
+        </>
+      )}
 
       {/* ------------------------------------------------------- units */}
       <SectionHeader title="Units" icon="swap-horizontal-outline" />
