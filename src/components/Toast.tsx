@@ -16,16 +16,6 @@ const ICONS: Record<ToastTone, keyof typeof Ionicons.glyphMap> = {
 
 const VISIBLE_MS = 2200;
 
-// A plain module-level emitter, so non-React code (the API client) can raise
-// a toast without needing a hook.
-let nextId = 1;
-const listeners = new Set<(t: ToastItem) => void>();
-
-export function showToast(message: string, tone: ToastTone = 'success') {
-  const item = { id: nextId++, message, tone };
-  listeners.forEach((fn) => fn(item));
-}
-
 /**
  * Renders the current toast above everything else. Mount once, near the root.
  * A new toast replaces the one on screen, so a burst of saves never stacks up.
