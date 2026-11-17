@@ -47,7 +47,7 @@ export function IconWell({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: filled ? accent : softFill(accent, theme),
-        boxShadow: filled ? `0px 6px 14px -6px ${accent}aa, inset 0px 1px 0px rgba(255,255,255,0.25)` : undefined,
+        boxShadow: filled ? `0px 6px 14px -6px ${accent}aa, inset 0px 1px 0px rgba(255,255,255,0.25)` : [],
       }}
     >
       <Ionicons name={icon} size={size * 0.47} color={filled ? '#FFFFFF' : accent} />
@@ -81,7 +81,7 @@ export function ActionTile({
       style={({ pressed }) => ({
         alignItems: 'center',
         flex: 1,
-        transform: pressed ? [{ scale: 0.94 }] : undefined,
+        transform: pressed ? [{ scale: 0.94 }] : [{ scale: 1 }],
       })}
     >
       {({ pressed }) => (
@@ -186,7 +186,7 @@ export function SegmentedControl<T extends string>({
               paddingVertical: spacing.sm + 3,
               borderRadius: radius.pill,
               backgroundColor: active ? theme.primary : 'transparent',
-              boxShadow: active ? theme.elevation.button : undefined,
+              boxShadow: active ? theme.elevation.button : [],
             }}
           >
             {o.icon && (
@@ -298,7 +298,7 @@ export function OptionTile({
           : pressed
             ? theme.elevation.pressed
             : theme.elevation.card,
-        transform: pressed ? [{ scale: 0.97 }] : undefined,
+        transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
       })}
     >
       <View
@@ -397,7 +397,7 @@ export function ArrowDisc({ onPress, size = 38, icon = 'arrow-forward' }: { onPr
         justifyContent: 'center',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 6px 14px rgba(10,22,48,0.28)',
-        transform: pressed ? [{ scale: 0.92 }] : undefined,
+        transform: pressed ? [{ scale: 0.92 }] : [{ scale: 1 }],
       }}
     >
       <Ionicons name={icon} size={size * 0.45} color={theme.primary} />

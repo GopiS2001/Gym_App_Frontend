@@ -219,7 +219,7 @@ function PlansTab() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           backgroundColor: trains ? theme.primary : theme.surfaceMuted,
-                          boxShadow: trains ? theme.elevation.button : undefined,
+                          boxShadow: trains ? theme.elevation.button : [],
                         }}
                       >
                         <Txt

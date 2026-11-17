@@ -267,7 +267,7 @@ export default function NutritionScreen() {
                   alignItems: 'center',
                   backgroundColor: theme.card,
                   boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
-                  transform: pressed ? [{ scale: 0.95 }] : undefined,
+                  transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }],
                 })}
               >
                 <Txt variant="caption" color={theme.hydration} style={{ fontWeight: '800' }}>
@@ -515,7 +515,7 @@ function DayButton({ icon, onPress }: { icon: 'chevron-back' | 'chevron-forward'
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.primarySoft,
-        transform: pressed ? [{ scale: 0.92 }] : undefined,
+        transform: pressed ? [{ scale: 0.92 }] : [{ scale: 1 }],
       })}
     >
       <Ionicons name={icon} size={18} color={theme.primary} />

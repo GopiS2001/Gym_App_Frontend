@@ -385,7 +385,7 @@ export default function HomeScreen() {
                       justifyContent: 'center',
                       backgroundColor: '#FFFFFF',
                       boxShadow: '0px 6px 14px rgba(0,0,0,0.3)',
-                      transform: pressed ? [{ scale: 0.92 }] : undefined,
+                      transform: pressed ? [{ scale: 0.92 }] : [{ scale: 1 }],
                     })}
                   >
                     <Ionicons name="arrow-forward" size={18} color={theme.primary} />
@@ -586,7 +586,7 @@ export default function HomeScreen() {
                 boxShadow: pressed
                   ? 'inset 0px 2px 4px rgba(15,31,61,0.12)'
                   : `0px 6px 12px -6px ${theme.hydration}88, inset 0px 1px 0px rgba(255,255,255,0.9)`,
-                transform: pressed ? [{ scale: 0.96 }] : undefined,
+                transform: pressed ? [{ scale: 0.96 }] : [{ scale: 1 }],
               })}
             >
               <Txt variant="small" color={theme.hydration} style={{ fontWeight: '700' }}>
@@ -690,7 +690,7 @@ function QuickAction({
       style={({ pressed }) => ({
         alignItems: 'center',
         width: 72,
-        transform: pressed ? [{ scale: 0.94 }] : undefined,
+        transform: pressed ? [{ scale: 0.94 }] : [{ scale: 1 }],
       })}
     >
       {({ pressed }) => (

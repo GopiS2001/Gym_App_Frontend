@@ -199,7 +199,7 @@ export function BarChart({
                         ? `${accent}66`
                         : '#A9C3F0'
                       : theme.surfaceMuted,
-                  boxShadow: isActive ? `0px 6px 12px -4px ${highlight}88` : undefined,
+                  boxShadow: isActive ? `0px 6px 12px -4px ${highlight}88` : [],
                   ...(isActive
                     ? {
                         shadowColor: highlight,

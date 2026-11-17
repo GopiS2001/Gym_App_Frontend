@@ -412,7 +412,7 @@ export function Chip({
           : '0px 1px 2px rgba(15,31,61,0.06), 0px 4px 10px -4px rgba(15,31,61,0.10)',
         marginRight: spacing.sm,
         opacity: pressed ? 0.75 : 1,
-        transform: pressed ? [{ scale: 0.97 }] : undefined,
+        transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
       })}
     >
       {icon && (
@@ -853,9 +853,9 @@ export function IconButton({
             ? pressed
               ? theme.elevation.pressed
               : theme.elevation.card
-            : undefined,
+            : [],
         opacity: pressed ? 0.85 : 1,
-        transform: pressed ? [{ scale: 0.95 }] : undefined,
+        transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }],
       })}
     >
       <Ionicons name={icon} size={size * 0.44} color={accent} />

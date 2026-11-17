@@ -87,8 +87,8 @@ export default function AddExerciseToPlanScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: on ? theme.primary : theme.surfaceMuted,
-                  boxShadow: on ? theme.elevation.button : undefined,
-                  transform: pressed ? [{ scale: 0.92 }] : undefined,
+                  boxShadow: on ? theme.elevation.button : [],
+                  transform: pressed ? [{ scale: 0.92 }] : [{ scale: 1 }],
                 })}
               >
                 <Txt variant="caption" color={on ? theme.onPrimary : theme.textSecondary}>
@@ -152,7 +152,7 @@ export default function AddExerciseToPlanScreen() {
                   borderWidth: isSelected ? 2 : StyleSheet.hairlineWidth * 2,
                   borderColor: isSelected ? theme.primary : theme.glassBorder,
                   boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
-                  transform: pressed ? [{ scale: 0.985 }] : undefined,
+                  transform: pressed ? [{ scale: 0.985 }] : [{ scale: 1 }],
                 })}
               >
                 <View

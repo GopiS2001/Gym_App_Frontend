@@ -68,7 +68,7 @@ export function GlassCard({
   const flat = variant === 'subtle' || variant === 'outline';
 
   const shadow = flat
-    ? undefined
+    ? []
     : glowColor
       ? `0px 14px 30px -10px ${withAlpha(glowColor, 0.45)}, 0px 1px 2px rgba(15,31,61,0.06)`
       : isHero || variant === 'strong'
@@ -128,10 +128,14 @@ export function GlassCard({
         onPress={onPress}
         style={({ pressed }) => [
           containerStyle,
-          pressed && {
-            transform: [{ scale: 0.98 }, { translateY: 1 }],
-            boxShadow: flat ? undefined : theme.elevation.pressed,
-          },
+          // Always set transform and shadow: on Android, removing a style
+          // key (rather than changing its value) crashes the native renderer.
+          pressed
+            ? {
+                transform: [{ scale: 0.98 }, { translateY: 1 }],
+                boxShadow: flat ? [] : theme.elevation.pressed,
+              }
+            : { transform: [{ scale: 1 }, { translateY: 0 }] },
           style,
         ]}
       >

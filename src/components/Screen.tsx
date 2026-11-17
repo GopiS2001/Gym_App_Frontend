@@ -189,7 +189,7 @@ export function ScreenHeader({
                 borderWidth: StyleSheet.hairlineWidth * 2,
                 borderColor: 'rgba(255,255,255,0.2)',
                 boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.22)',
-                transform: pressed ? [{ scale: 0.94 }] : undefined,
+                transform: pressed ? [{ scale: 0.94 }] : [{ scale: 1 }],
                 marginRight: spacing.md,
               })}
             >

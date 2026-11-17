@@ -161,13 +161,13 @@ export default function ProfileScreen() {
         <StatCard
           icon="barbell"
           label="Workouts"
-          value={stats.data?.totals.sessionCount ?? 0}
+          value={stats.data?.totals?.sessionCount ?? 0}
           color={theme.primary}
         />
         <StatCard
           icon="time"
           label="Training"
-          value={formatMinutes(stats.data?.totals.totalMinutes)}
+          value={formatMinutes(stats.data?.totals?.totalMinutes)}
           color={theme.hydration}
         />
       </View>
@@ -175,7 +175,7 @@ export default function ProfileScreen() {
         <StatCard
           icon="layers"
           label="Volume"
-          value={formatVolume(stats.data?.totals.totalVolumeKg)}
+          value={formatVolume(stats.data?.totals?.totalVolumeKg)}
           color={theme.streak}
         />
         <StatCard

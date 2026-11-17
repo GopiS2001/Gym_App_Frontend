@@ -401,7 +401,7 @@ export default function AddFoodScreen() {
                   paddingVertical: 7,
                   borderRadius: 999,
                   backgroundColor: 'rgba(255,255,255,0.14)',
-                  transform: pressed ? [{ scale: 0.95 }] : undefined,
+                  transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }],
                 })}
               >
                 <Txt variant="caption">Change</Txt>
@@ -521,7 +521,7 @@ export default function AddFoodScreen() {
         )}
 
         {mode === 'library' ? (
-          <GlassCard variant="tint" noBorder style={{ boxShadow: undefined }}>
+          <GlassCard variant="tint" noBorder style={{ boxShadow: [] }}>
             <Txt variant="caption" color={theme.textSecondary}>
               YOU'LL LOG (ESTIMATE)
             </Txt>
