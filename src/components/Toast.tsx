@@ -38,7 +38,7 @@ export function ToastHost() {
   };
 
   useEffect(() => {
-    const onToast = (t: ToastItem) => {
+    const off = onToast((t: ToastItem) => {
       if (timer.current) clearTimeout(timer.current);
       setToast(t);
       anim.setValue(0);
