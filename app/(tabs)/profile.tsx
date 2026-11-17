@@ -4,7 +4,7 @@ import { AppImage as Image } from '@/components/AppImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTheme } from '@/theme/ThemeProvider';
+import { THEME_SWITCHING_ENABLED, useTheme } from '@/theme/ThemeProvider';
 import { useAuth } from '@/store/AuthContext';
 import { useApi } from '@/hooks/useApi';
 import { analyticsApi, attendanceApi, profileApi } from '@/services/endpoints';
@@ -175,6 +175,9 @@ export default function ProfileScreen() {
       </View>
 
       {/* ------------------------------------------------------- theme */}
+      {/* Hidden while the app is light-only; see THEME_SWITCHING_ENABLED. */}
+      {THEME_SWITCHING_ENABLED && (
+      <>
       <SectionHeader title="Appearance" />
       <GlassCard style={{ marginBottom: spacing.base }}>
         <View
