@@ -59,7 +59,7 @@ export function refreshReminderSchedule({ force = false } = {}): Promise<SyncRes
 export function useReminderSync(enabled: boolean) {
   const router = useRouter();
   const handled = useRef(new Set<string>());
-  const lastResponse = Notifications.useLastNotificationResponse();
+  const lastResponse = useLastResponse();
 
   // Schedule on sign-in and whenever the app comes back to the foreground
   // (which also catches timezone and clock changes made while away).
