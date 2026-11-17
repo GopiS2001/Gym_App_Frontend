@@ -8,6 +8,7 @@ import { categoriesApi, exercisesApi } from '@/services/endpoints';
 import { Screen, ScreenHeader } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
 import { Button, Chip, Field, LoadingState, Txt } from '@/components/ui';
+import { FieldLabel, FormSection, Notice, OptionTile } from '@/components/premium';
 import {
   ExerciseMediaEditor,
   MediaState,
@@ -18,6 +19,12 @@ import {
 import { DIFFICULTY_LABELS } from '@/utils/format';
 
 const DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
+
+const DIFFICULTY_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+  BEGINNER: 'leaf-outline',
+  INTERMEDIATE: 'flame-outline',
+  ADVANCED: 'trophy-outline',
+};
 
 export default function ExerciseFormScreen() {
   const { theme, spacing, radius } = useTheme();
@@ -119,102 +126,102 @@ export default function ExerciseFormScreen() {
 
       <ExerciseMediaEditor value={media} onChange={setMedia} videoError={errors.video} />
 
-      <Field
-        label="NAME *"
-        value={name}
-        onChangeText={setName}
-        placeholder="e.g. Incline Dumbbell Press"
-        error={errors.name}
-      />
+      <FormSection icon="barbell-outline" title="Basics" subtitle="Name, category and difficulty">
+        <Field
+          label="NAME *"
+          value={name}
+          onChangeText={setName}
+          placeholder="e.g. Incline Dumbbell Press"
+          error={errors.name}
+        />
 
-      <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm, marginLeft: 2 }}>
-        CATEGORY *
-      </Txt>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ flexGrow: 0, marginBottom: errors.categoryId ? spacing.xs : spacing.base }}
-      >
-        {(categories.data?.items || []).map((c) => (
-          <Chip
-            key={c.id}
-            label={c.name}
-            color={c.colorHex || undefined}
-            selected={categoryId === c.id}
-            onPress={() => {
-              setCategoryId(c.id);
-              setErrors((p) => ({ ...p, categoryId: undefined as any }));
-            }}
-          />
-        ))}
-      </ScrollView>
-      {!!errors.categoryId && (
-        <Txt variant="caption" color={theme.danger} style={{ marginBottom: spacing.base }}>
-          {errors.categoryId}
-        </Txt>
-      )}
+        <FieldLabel>CATEGORY *</FieldLabel>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ flexGrow: 0, marginBottom: errors.categoryId ? spacing.xs : spacing.base }}
+          contentContainerStyle={{ paddingVertical: 4 }}
+        >
+          {(categories.data?.items || []).map((c) => (
+            <Chip
+              key={c.id}
+              label={c.name}
+              color={c.colorHex || undefined}
+              selected={categoryId === c.id}
+              onPress={() => {
+                setCategoryId(c.id);
+                setErrors((p) => ({ ...p, categoryId: undefined as any }));
+              }}
+            />
+          ))}
+        </ScrollView>
+        {!!errors.categoryId && (
+          <Txt variant="caption" color={theme.danger} style={{ marginBottom: spacing.base }}>
+            {errors.categoryId}
+          </Txt>
+        )}
 
-      <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm, marginLeft: 2 }}>
-        DIFFICULTY
-      </Txt>
-      <View style={{ flexDirection: 'row', marginBottom: spacing.base }}>
-        {DIFFICULTIES.map((level) => (
-          <Chip
-            key={level}
-            label={DIFFICULTY_LABELS[level]}
-            selected={difficulty === level}
-            onPress={() => setDifficulty(level)}
-          />
-        ))}
-      </View>
+        <FieldLabel>DIFFICULTY</FieldLabel>
+        <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+          {DIFFICULTIES.map((level) => (
+            <OptionTile
+              key={level}
+              icon={DIFFICULTY_ICONS[level]}
+              label={DIFFICULTY_LABELS[level]}
+              selected={difficulty === level}
+              onPress={() => setDifficulty(level)}
+            />
+          ))}
+        </View>
+      </FormSection>
 
-      <Field
-        label="TARGET MUSCLE"
-        value={targetMuscle}
-        onChangeText={setTargetMuscle}
-        placeholder="e.g. Upper Pectorals"
-      />
+      <FormSection icon="body-outline" title="Muscles & equipment" subtitle="What it works and what you need">
+        <Field
+          label="TARGET MUSCLE"
+          value={targetMuscle}
+          onChangeText={setTargetMuscle}
+          placeholder="e.g. Upper Pectorals"
+          icon="locate-outline"
+        />
 
-      <Field
-        label="SECONDARY MUSCLES"
-        value={secondary}
-        onChangeText={setSecondary}
-        placeholder="Comma separated, e.g. Triceps, Front Delts"
-      />
+        <Field
+          label="SECONDARY MUSCLES"
+          value={secondary}
+          onChangeText={setSecondary}
+          placeholder="Comma separated, e.g. Triceps, Front Delts"
+          icon="git-branch-outline"
+        />
 
-      <Field
-        label="EQUIPMENT"
-        value={equipment}
-        onChangeText={setEquipment}
-        placeholder="e.g. Dumbbell"
-      />
+        <Field
+          label="EQUIPMENT"
+          value={equipment}
+          onChangeText={setEquipment}
+          placeholder="e.g. Dumbbell"
+          icon="hardware-chip-outline"
+          style={{ marginBottom: 0 }}
+        />
+      </FormSection>
 
-      <Field
-        label="DESCRIPTION"
-        value={description}
-        onChangeText={setDescription}
-        placeholder="What this movement is for"
-        multiline
-      />
+      <FormSection icon="reader-outline" title="How to do it" subtitle="Notes for good form">
+        <Field
+          label="DESCRIPTION"
+          value={description}
+          onChangeText={setDescription}
+          placeholder="What this movement is for"
+          multiline
+        />
 
-      <Field
-        label="INSTRUCTIONS"
-        value={instructions}
-        onChangeText={setInstructions}
-        placeholder={'One step per line:\n1. Set the bench to 30 degrees\n2. ...'}
-        multiline
-      />
+        <Field
+          label="INSTRUCTIONS"
+          value={instructions}
+          onChangeText={setInstructions}
+          placeholder={'One step per line:\n1. Set the bench to 30 degrees\n2. ...'}
+          multiline
+          style={{ marginBottom: 0 }}
+        />
+      </FormSection>
 
-      {!!save.error && (
-        <GlassCard style={{ marginBottom: spacing.base }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="alert-circle" size={17} color={theme.danger} />
-            <Txt variant="small" color={theme.danger} style={{ flex: 1, marginLeft: spacing.sm }}>
-              {save.error}
-            </Txt>
-          </View>
-        </GlassCard>
-      )}
+      {!!save.error && <Notice tone="danger" text={save.error} />}
 
       <Button
         title={isEdit ? 'Save changes' : 'Create exercise'}
