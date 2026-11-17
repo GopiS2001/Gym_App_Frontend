@@ -227,6 +227,8 @@ export default function ProfileScreen() {
           })}
         </View>
       </GlassCard>
+      </>
+      )}
 
       {/* -------------------------------------------------------- menu */}
       <SectionHeader title="Manage" />
