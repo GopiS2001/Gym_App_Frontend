@@ -49,10 +49,9 @@ export function ToastHost() {
         useNativeDriver: Platform.OS !== 'web',
       }).start();
       timer.current = setTimeout(hide, VISIBLE_MS);
-    };
-    listeners.add(onToast);
+    });
     return () => {
-      listeners.delete(onToast);
+      off();
       if (timer.current) clearTimeout(timer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
