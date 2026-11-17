@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View } from 'react-native';
@@ -53,7 +52,9 @@ function RootNavigator() {
 
   return (
     <>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+      {/* No <StatusBar> here: each screen sets its icon colour on focus (see
+          useStatusBarStyle). A root one would re-apply its style on every
+          navigation and undo that. */}
       <Stack
         id={undefined}
         screenOptions={{

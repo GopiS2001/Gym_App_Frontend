@@ -824,6 +824,9 @@ export function IconButton({
 }) {
   const { theme } = useTheme();
   const accent = color || theme.text;
+  // A white icon sits on a photo or a navy panel: use frosted glass there,
+  // since a white disc would hide it.
+  const onImage = variant === 'glass' && /^(#fff|#ffffff|white)$/i.test(accent);
 
   return (
     <Pressable
@@ -835,16 +838,18 @@ export function IconButton({
         borderRadius: size / 2,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor:
-          variant === 'glass'
+        backgroundColor: onImage
+          ? 'rgba(10,22,48,0.32)'
+          : variant === 'glass'
             ? theme.glassStrong
             : variant === 'solid'
               ? `${accent}1A`
               : 'transparent',
         borderWidth: variant === 'glass' ? StyleSheet.hairlineWidth * 2 : 0,
-        borderColor: theme.glassBorder,
-        boxShadow:
-          variant === 'glass'
+        borderColor: onImage ? 'rgba(255,255,255,0.28)' : theme.glassBorder,
+        boxShadow: onImage
+          ? 'inset 0px 1px 0px rgba(255,255,255,0.22)'
+          : variant === 'glass'
             ? pressed
               ? theme.elevation.pressed
               : theme.elevation.card

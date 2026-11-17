@@ -191,7 +191,15 @@ export function BarChart({
                   width: '58%',
                   height: barHeight,
                   borderRadius: radius.pill,
-                  backgroundColor: isActive ? highlight : item.value > 0 ? `${accent}66` : theme.surfaceMuted,
+                  backgroundColor: isActive
+                    ? highlight
+                    : item.value > 0
+                      ? // Pale blue in the light theme, to match the navy highlight.
+                        color || theme.mode === 'dark'
+                        ? `${accent}66`
+                        : '#A9C3F0'
+                      : theme.surfaceMuted,
+                  boxShadow: isActive ? `0px 6px 12px -4px ${highlight}88` : undefined,
                   ...(isActive
                     ? {
                         shadowColor: highlight,

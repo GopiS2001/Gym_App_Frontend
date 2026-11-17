@@ -18,9 +18,10 @@ interface GlassCardProps {
   intensity?: number;
   /**
    * `strong` reads as a raised panel, `subtle` as an inline well, `hero` as
-   * a deep-navy feature panel whose content is re-themed light-on-navy.
+   * a deep-navy feature panel whose content is re-themed light-on-navy, and
+   * `tint` a pale-blue panel for grouped stats.
    */
-  variant?: 'default' | 'strong' | 'subtle' | 'outline' | 'hero';
+  variant?: 'default' | 'strong' | 'subtle' | 'outline' | 'hero' | 'tint';
   radius?: number;
   padded?: boolean;
   onPress?: () => void;
@@ -50,6 +51,7 @@ export function GlassCard({
 }: GlassCardProps) {
   const { theme, radius, spacing } = useTheme();
   const isHero = variant === 'hero';
+  const isTint = variant === 'tint';
   const dark = theme.mode === 'dark';
 
   const fill =
@@ -57,12 +59,12 @@ export function GlassCard({
       ? theme.glassStrong
       : variant === 'subtle'
         ? theme.surfaceMuted
-        : variant === 'outline' || isHero
+        : variant === 'outline' || isHero || isTint
           ? 'transparent'
           : theme.glass;
 
   const cardRadius = radiusProp ?? radius.xl;
-  const useBlur = dark && !isHero && Platform.OS === 'ios' && variant !== 'outline';
+  const useBlur = dark && !isHero && !isTint && Platform.OS === 'ios' && variant !== 'outline';
   const flat = variant === 'subtle' || variant === 'outline';
 
   const shadow = flat
@@ -96,6 +98,14 @@ export function GlassCard({
           {/* A soft light bloom in the corner gives the panel volume. */}
           <View pointerEvents="none" style={styles.heroBloom} />
         </>
+      )}
+      {isTint && (
+        <LinearGradient
+          colors={dark ? [theme.glassStrong, theme.glass] : TINT_GRADIENT}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
       )}
       {useBlur && (
         <BlurView
@@ -134,6 +144,7 @@ export function GlassCard({
 }
 
 const HERO_GRADIENT = ['#2B4A80', '#16294D', '#0A1630'] as const;
+const TINT_GRADIENT = ['#EEF3FD', '#DCE7F8'] as const;
 
 /** `#RRGGBB` plus an alpha; other colour formats are returned unchanged. */
 function withAlpha(color: string, alpha: number): string {

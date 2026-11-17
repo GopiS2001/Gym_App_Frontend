@@ -12,7 +12,10 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTheme } from '@/theme/ThemeProvider';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ThemeScope, useTheme } from '@/theme/ThemeProvider';
+import { heroTheme } from '@/theme/tokens';
+import { useStatusBarStyle } from '@/hooks/useStatusBarStyle';
 import { GlowOrb, ScreenGradient } from './Glass';
 import { Txt } from './ui';
 import { useTabBarSpace } from './TabBar';
@@ -113,7 +116,15 @@ export function Screen({
   );
 }
 
-/** Title row with an optional back button and trailing action. */
+/**
+ * Page header: a deep-navy banner that runs edge to edge under the status
+ * bar with rounded bottom corners, a white title, a light-blue subtitle and a
+ * frosted back button. Trailing actions keep the light theme, so the usual
+ * icon buttons show as white 3D discs on the navy.
+ *
+ * It must be the first child of a padded `Screen` (it bleeds out over the
+ * Screen's side and top padding).
+ */
 export function ScreenHeader({
   title,
   subtitle,
@@ -127,54 +138,91 @@ export function ScreenHeader({
   right?: React.ReactNode;
   onBack?: () => void;
 }) {
-  const { theme, spacing, radius } = useTheme();
+  const { theme, spacing } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  useStatusBarStyle('light');
 
   return (
     <View
       style={{
-        flexDirection: 'row',
-        alignItems: 'center',
+        marginHorizontal: -spacing.lg,
+        marginTop: -(insets.top + spacing.sm),
         marginBottom: spacing.lg,
-        minHeight: 44,
+        paddingTop: insets.top + spacing.md,
+        paddingHorizontal: spacing.lg,
+        paddingBottom: spacing.xl,
+        borderBottomLeftRadius: 32,
+        borderBottomRightRadius: 32,
+        overflow: 'hidden',
+        boxShadow: theme.elevation.raised,
       }}
     >
-      {showBack && (
-        <Pressable
-          onPress={() => (onBack ? onBack() : router.back())}
-          hitSlop={10}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-          style={({ pressed }) => ({
-            width: 42,
-            height: 42,
-            borderRadius: 21,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: theme.glassStrong,
-            borderWidth: StyleSheet.hairlineWidth * 2,
-            borderColor: theme.glassBorder,
-            boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
-            transform: pressed ? [{ scale: 0.95 }] : undefined,
-            marginRight: spacing.md,
-          })}
-        >
-          <Ionicons name="chevron-back" size={20} color={theme.text} />
-        </Pressable>
-      )}
+      <LinearGradient
+        colors={HEADER_GRADIENT}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      {/* Soft light blooms give the banner volume. */}
+      <View pointerEvents="none" style={[styles.bloom, { top: -110, right: -70 }]} />
+      <View
+        pointerEvents="none"
+        style={[styles.bloom, { width: 140, height: 140, borderRadius: 70, bottom: -80, left: -40 }]}
+      />
 
-      <View style={{ flex: 1 }}>
-        <Txt variant="h2" numberOfLines={1}>
-          {title}
-        </Txt>
-        {subtitle && (
-          <Txt variant="small" color={theme.textTertiary} numberOfLines={1} style={{ marginTop: 1 }}>
-            {subtitle}
-          </Txt>
-        )}
+      <View style={{ flexDirection: 'row', alignItems: 'center', minHeight: 44 }}>
+        <ThemeScope theme={heroTheme}>
+          {showBack && (
+            <Pressable
+              onPress={() => (onBack ? onBack() : router.back())}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              style={({ pressed }) => ({
+                width: 42,
+                height: 42,
+                borderRadius: 21,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255,255,255,0.12)',
+                borderWidth: StyleSheet.hairlineWidth * 2,
+                borderColor: 'rgba(255,255,255,0.2)',
+                boxShadow: 'inset 0px 1px 0px rgba(255,255,255,0.22)',
+                transform: pressed ? [{ scale: 0.94 }] : undefined,
+                marginRight: spacing.md,
+              })}
+            >
+              <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
+            </Pressable>
+          )}
+
+          <View style={{ flex: 1 }}>
+            <Txt variant="h1" color="#FFFFFF" numberOfLines={1}>
+              {title}
+            </Txt>
+            {subtitle && (
+              <Txt variant="small" color="#A9C3F0" numberOfLines={1} style={{ marginTop: 2 }}>
+                {subtitle}
+              </Txt>
+            )}
+          </View>
+        </ThemeScope>
+
+        {right && <View style={{ marginLeft: spacing.sm }}>{right}</View>}
       </View>
-
-      {right}
     </View>
   );
 }
+
+const HEADER_GRADIENT = ['#2B4A80', '#16294D', '#0A1630'] as const;
+
+const styles = StyleSheet.create({
+  bloom: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(169,195,240,0.08)',
+  },
+});

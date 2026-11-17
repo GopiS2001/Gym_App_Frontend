@@ -11,11 +11,13 @@ import { analyticsApi, waterApi } from '@/services/endpoints';
 import { Screen } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
 import { heroTheme } from '@/theme/tokens';
+import { useStatusBarStyle } from '@/hooks/useStatusBarStyle';
 import {
   Badge,
   Button,
   EmptyState,
   ErrorState,
+  IconButton,
   LoadingState,
   ProgressBar,
   SectionHeader,
@@ -28,6 +30,8 @@ const { width: SCREEN_W } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const { theme, spacing, radius } = useTheme();
+  // The dashboard has a light top (no navy header), so dark status icons.
+  useStatusBarStyle('dark');
   const router = useRouter();
   const { profile } = useAuth();
 
@@ -65,25 +69,33 @@ export default function HomeScreen() {
           flexDirection: 'row',
           alignItems: 'center',
           marginBottom: spacing.lg,
+          marginTop: spacing.xs,
         }}
       >
-        <Pressable onPress={() => router.push('/(tabs)/profile')}>
+        <Pressable
+          onPress={() => router.push('/(tabs)/profile')}
+          accessibilityRole="button"
+          accessibilityLabel="Open profile"
+        >
           <View
             style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
+              width: 52,
+              height: 52,
+              borderRadius: 26,
               overflow: 'hidden',
-              borderWidth: 2,
-              borderColor: theme.primary,
-              backgroundColor: theme.surfaceMuted,
+              borderWidth: 3,
+              borderColor: '#FFFFFF',
+              backgroundColor: theme.primarySoft,
+              boxShadow: theme.elevation.card,
             }}
           >
             {avatar ? (
               <Image source={{ uri: avatar }} style={{ flex: 1 }} contentFit="cover" />
             ) : (
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Ionicons name="person" size={22} color={theme.textTertiary} />
+                <Txt variant="h4" color={theme.primary}>
+                  {initials(d.profile?.fullName)}
+                </Txt>
               </View>
             )}
           </View>
@@ -91,9 +103,9 @@ export default function HomeScreen() {
 
         <View style={{ flex: 1, marginLeft: spacing.md }}>
           <Txt variant="small" color={theme.textTertiary}>
-            {d.greeting}
+            {d.greeting},
           </Txt>
-          <Txt variant="h3" numberOfLines={1}>
+          <Txt variant="h2" numberOfLines={1}>
             {d.profile?.fullName || 'Athlete'}
           </Txt>
         </View>
@@ -104,19 +116,24 @@ export default function HomeScreen() {
               flexDirection: 'row',
               alignItems: 'center',
               paddingHorizontal: spacing.md,
-              paddingVertical: 7,
+              height: 36,
               borderRadius: radius.pill,
-              backgroundColor: theme.streakSoft,
-              borderWidth: StyleSheet.hairlineWidth * 2,
-              borderColor: `${theme.streak}44`,
+              backgroundColor: theme.card,
+              boxShadow: theme.elevation.card,
+              marginRight: spacing.sm,
             }}
           >
             <Ionicons name="flame" size={14} color={theme.streak} />
-            <Txt variant="caption" color={theme.streak} style={{ marginLeft: 4 }}>
-              {d.totals.currentStreak} DAY
+            <Txt variant="caption" color={theme.text} style={{ marginLeft: 4 }}>
+              {d.totals.currentStreak}
             </Txt>
           </View>
         )}
+        <IconButton
+          icon="notifications-outline"
+          color={theme.primary}
+          onPress={() => router.push('/nutrition/reminders')}
+        />
       </View>
 
       {/* --------------------------------------------- resume live session */}
@@ -231,10 +248,94 @@ export default function HomeScreen() {
         </View>
       </GlassCard>
 
+      {/* --------------------------------------------------- quick access */}
+      <GlassCard style={{ marginBottom: spacing.base }}>
+        <Txt variant="h4" style={{ marginBottom: spacing.md }}>
+          Quick Access
+        </Txt>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <QuickAction
+            icon="barbell-outline"
+            label="Workout"
+            highlighted
+            onPress={() =>
+              d.activeSession
+                ? router.push(`/workout/active?id=${d.activeSession.id}`)
+                : router.push('/workout/start')
+            }
+          />
+          <QuickAction icon="restaurant-outline" label="Log meal" onPress={() => router.push('/nutrition/add')} />
+          <QuickAction icon="scale-outline" label="Weight" onPress={() => router.push('/progress/log-weight')} />
+          <QuickAction icon="moon-outline" label="Sleep" onPress={() => router.push('/progress/log-sleep')} />
+        </View>
+      </GlassCard>
+
+      {/* ------------------------------------------------ health overview */}
+      <GlassCard
+        variant="tint"
+        style={{ marginBottom: spacing.base }}
+        onPress={() => router.push('/(tabs)/progress')}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: spacing.md,
+          }}
+        >
+          <Txt variant="h4">Health Overview</Txt>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: spacing.md,
+              paddingVertical: 5,
+              borderRadius: radius.pill,
+              backgroundColor: theme.card,
+              boxShadow: theme.elevation.card,
+            }}
+          >
+            <Txt variant="caption" color={theme.text}>
+              Today
+            </Txt>
+            <Ionicons name="chevron-forward" size={11} color={theme.textTertiary} style={{ marginLeft: 2 }} />
+          </View>
+        </View>
+
+        <View style={{ flexDirection: 'row' }}>
+          <HealthStat
+            label="Weight"
+            value={d.weight.currentKg?.toFixed(1) ?? '--'}
+            unit="kg"
+            icon="scale-outline"
+            note={
+              d.weight.changeKg !== null
+                ? `${d.weight.changeKg > 0 ? '+' : ''}${d.weight.changeKg.toFixed(1)} kg`
+                : undefined
+            }
+          />
+          <HealthStat
+            label="BMI"
+            value={d.weight.bmi?.toFixed(1) ?? '--'}
+            unit={d.weight.bmiCategory || 'index'}
+            icon="body-outline"
+            divider
+          />
+          <HealthStat
+            label="Sleep"
+            value={d.lastSleep ? d.lastSleep.durationHours.toFixed(1) : '--'}
+            unit="hours"
+            icon="moon-outline"
+            divider
+          />
+        </View>
+      </GlassCard>
+
       {/* ---------------------------------------------- today's workout */}
       {d.todaysWorkout && !d.todaysWorkout.isRestDay ? (
         <GlassCard padded={false} style={{ marginBottom: spacing.base }} variant="strong">
-          <View style={{ height: 136 }}>
+          <View style={{ height: 170 }}>
             {d.todaysWorkout.exercises[0]?.imageUrl ? (
               <Image
                 source={{ uri: d.todaysWorkout.exercises[0].imageUrl }}
@@ -246,7 +347,7 @@ export default function HomeScreen() {
               <LinearGradient colors={theme.primaryGradient} style={StyleSheet.absoluteFill} />
             )}
             <LinearGradient
-              colors={['rgba(7,10,14,0.15)', 'rgba(7,10,14,0.88)']}
+              colors={['rgba(10,22,48,0.05)', 'rgba(10,22,48,0.9)']}
               style={StyleSheet.absoluteFill}
             />
 
@@ -262,12 +363,33 @@ export default function HomeScreen() {
               </View>
 
               <View>
-                <Txt variant="h3" color="#FFFFFF" numberOfLines={1}>
-                  {d.todaysWorkout.muscleGroups.join(' + ') || d.todaysWorkout.planName}
-                </Txt>
-                <View style={{ flexDirection: 'row', marginTop: 5, gap: spacing.base }}>
-                  <InlineStat icon="list" text={`${d.todaysWorkout.exerciseCount} exercises`} />
-                  <InlineStat icon="time-outline" text={`~${d.todaysWorkout.estimatedMinutes} min`} />
+                <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                  <View style={{ flex: 1 }}>
+                    <Txt variant="h3" color="#FFFFFF" numberOfLines={1}>
+                      {d.todaysWorkout.muscleGroups.join(' + ') || d.todaysWorkout.planName}
+                    </Txt>
+                    <View style={{ flexDirection: 'row', marginTop: 5, gap: spacing.base }}>
+                      <InlineStat icon="list" text={`${d.todaysWorkout.exerciseCount} exercises`} />
+                      <InlineStat icon="time-outline" text={`~${d.todaysWorkout.estimatedMinutes} min`} />
+                    </View>
+                  </View>
+                  <Pressable
+                    onPress={() => router.push(`/plans/${d.todaysWorkout!.planId}`)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Open workout plan"
+                    style={({ pressed }) => ({
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0px 6px 14px rgba(0,0,0,0.3)',
+                      transform: pressed ? [{ scale: 0.92 }] : undefined,
+                    })}
+                  >
+                    <Ionicons name="arrow-forward" size={18} color={theme.primary} />
+                  </Pressable>
                 </View>
               </View>
             </View>
@@ -385,49 +507,6 @@ export default function HomeScreen() {
         </View>
       </GlassCard>
 
-      {/* ---------------------------------------------------- weight card */}
-      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.base }}>
-        <GlassCard style={{ flex: 1 }} onPress={() => router.push('/(tabs)/progress')}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm }}>
-            <Ionicons name="scale-outline" size={15} color={theme.primary} />
-            <Txt variant="caption" color={theme.textTertiary} style={{ marginLeft: 5 }}>
-              WEIGHT
-            </Txt>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <Txt variant="numeric">{d.weight.currentKg?.toFixed(1) ?? '--'}</Txt>
-            <Txt variant="small" color={theme.textTertiary} style={{ marginLeft: 3 }}>
-              kg
-            </Txt>
-          </View>
-          {d.weight.changeKg !== null && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 3 }}>
-              <Ionicons
-                name={d.weight.changeKg >= 0 ? 'arrow-up' : 'arrow-down'}
-                size={11}
-                color={theme.primary}
-              />
-              <Txt variant="caption" color={theme.primary} style={{ marginLeft: 2 }}>
-                {Math.abs(d.weight.changeKg).toFixed(1)} kg total
-              </Txt>
-            </View>
-          )}
-        </GlassCard>
-
-        <GlassCard style={{ flex: 1 }} onPress={() => router.push('/(tabs)/progress')}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm }}>
-            <Ionicons name="body-outline" size={15} color={theme.streak} />
-            <Txt variant="caption" color={theme.textTertiary} style={{ marginLeft: 5 }}>
-              BMI
-            </Txt>
-          </View>
-          <Txt variant="numeric">{d.weight.bmi?.toFixed(1) ?? '--'}</Txt>
-          <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: 3 }}>
-            {d.weight.bmiCategory || 'Add height & weight'}
-          </Txt>
-        </GlassCard>
-      </View>
-
       {/* ------------------------------------------------------ goal card */}
       {d.activeGoal && (
         <GlassCard style={{ marginBottom: spacing.base }} onPress={() => router.push('/goals')}>
@@ -501,12 +580,13 @@ export default function HomeScreen() {
               style={({ pressed }) => ({
                 flex: 1,
                 paddingVertical: spacing.md,
-                borderRadius: radius.md,
+                borderRadius: radius.pill,
                 alignItems: 'center',
                 backgroundColor: theme.hydrationSoft,
-                borderWidth: StyleSheet.hairlineWidth * 2,
-                borderColor: `${theme.hydration}33`,
-                opacity: pressed ? 0.6 : 1,
+                boxShadow: pressed
+                  ? 'inset 0px 2px 4px rgba(15,31,61,0.12)'
+                  : `0px 6px 12px -6px ${theme.hydration}88, inset 0px 1px 0px rgba(255,255,255,0.9)`,
+                transform: pressed ? [{ scale: 0.96 }] : undefined,
               })}
             >
               <Txt variant="small" color={theme.hydration} style={{ fontWeight: '700' }}>
@@ -583,6 +663,121 @@ export default function HomeScreen() {
 }
 
 // ------------------------------------------------------------- small parts
+
+function initials(name?: string | null) {
+  const parts = (name || 'A').trim().split(/\s+/);
+  return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || 'A';
+}
+
+/** Round icon tile from the reference's "Quick Access" row. */
+function QuickAction({
+  icon,
+  label,
+  onPress,
+  highlighted = false,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  onPress: () => void;
+  highlighted?: boolean;
+}) {
+  const { theme, spacing } = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({
+        alignItems: 'center',
+        width: 72,
+        transform: pressed ? [{ scale: 0.94 }] : undefined,
+      })}
+    >
+      {({ pressed }) => (
+        <>
+          <View
+            style={{
+              width: 58,
+              height: 58,
+              borderRadius: 29,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: highlighted ? theme.primarySoft : theme.card,
+              borderWidth: StyleSheet.hairlineWidth * 2,
+              borderColor: highlighted ? '#CCDCF6' : theme.glassBorder,
+              boxShadow: pressed ? theme.elevation.pressed : theme.elevation.card,
+            }}
+          >
+            <Ionicons name={icon} size={23} color={theme.primary} />
+          </View>
+          <Txt
+            variant="caption"
+            color={theme.textSecondary}
+            align="center"
+            numberOfLines={1}
+            style={{ marginTop: spacing.sm }}
+          >
+            {label}
+          </Txt>
+        </>
+      )}
+    </Pressable>
+  );
+}
+
+/** One column of the pale-blue "Health Overview" card. */
+function HealthStat({
+  label,
+  value,
+  unit,
+  icon,
+  note,
+  divider = false,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  note?: string;
+  divider?: boolean;
+}) {
+  const { theme, spacing } = useTheme();
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingLeft: divider ? spacing.md : 0,
+        marginLeft: divider ? spacing.md : 0,
+        borderLeftWidth: divider ? 1 : 0,
+        borderLeftColor: 'rgba(15,31,61,0.08)',
+      }}
+    >
+      <Txt variant="caption" color={theme.textSecondary}>
+        {label}
+      </Txt>
+      <Txt variant="numeric" style={{ fontSize: 24, lineHeight: 30, marginTop: 4 }}>
+        {value}
+      </Txt>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 }}>
+        <Txt variant="caption" color={theme.textTertiary} numberOfLines={1} style={{ flex: 1 }}>
+          {note || unit}
+        </Txt>
+        <View
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: 11,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.card,
+          }}
+        >
+          <Ionicons name={icon} size={12} color={theme.primary} />
+        </View>
+      </View>
+    </View>
+  );
+}
 
 function MetricRow({
   color,

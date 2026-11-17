@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useStatusBarStyle } from '@/hooks/useStatusBarStyle';
 import { useApi } from '@/hooks/useApi';
 import { exercisesApi } from '@/services/endpoints';
 import { Screen } from '@/components/Screen';
@@ -31,6 +32,7 @@ const { width: SCREEN_W } = Dimensions.get('window');
 export default function ExerciseDetailScreen() {
   const { confirm, notify } = useDialog();
   const { theme, spacing, radius } = useTheme();
+  useStatusBarStyle('light');
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();

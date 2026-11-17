@@ -5,6 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { THEME_SWITCHING_ENABLED, useTheme } from '@/theme/ThemeProvider';
+import { heroTheme } from '@/theme/tokens';
+import { useStatusBarStyle } from '@/hooks/useStatusBarStyle';
 import { useAuth } from '@/store/AuthContext';
 import { useApi } from '@/hooks/useApi';
 import { analyticsApi, attendanceApi, profileApi } from '@/services/endpoints';
@@ -17,6 +19,7 @@ import { formatDate, formatMinutes, formatVolume, humanise } from '@/utils/forma
 export default function ProfileScreen() {
   const { theme, spacing, radius, preference, setPreference } = useTheme();
   const router = useRouter();
+  useStatusBarStyle('dark');
   const { signOut, user, refreshProfile } = useAuth();
   const confirm = useConfirm();
 
@@ -56,9 +59,9 @@ export default function ProfileScreen() {
       }}
     >
       {/* ---------------------------------------------------- hero card */}
-      <GlassCard variant="strong" style={{ marginBottom: spacing.base }} padded={false}>
+      <GlassCard variant="hero" style={{ marginBottom: spacing.base }} padded={false}>
         <LinearGradient
-          colors={[`${theme.primary}2E`, 'transparent']}
+          colors={[`${heroTheme.primary}2E`, 'transparent']}
           style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 110 }}
         />
 
@@ -71,15 +74,15 @@ export default function ProfileScreen() {
                 borderRadius: 30,
                 overflow: 'hidden',
                 borderWidth: 2.5,
-                borderColor: theme.primary,
-                backgroundColor: theme.surfaceMuted,
+                borderColor: heroTheme.primary,
+                backgroundColor: heroTheme.surfaceMuted,
               }}
             >
               {p?.profileImageUrl ? (
                 <Image source={{ uri: p.profileImageUrl }} style={{ flex: 1 }} contentFit="cover" />
               ) : (
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                  <Ionicons name="person" size={38} color={theme.textTertiary} />
+                  <Ionicons name="person" size={38} color={heroTheme.textTertiary} />
                 </View>
               )}
             </View>
@@ -93,19 +96,19 @@ export default function ProfileScreen() {
                 borderRadius: 14,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: theme.primary,
+                backgroundColor: heroTheme.primary,
                 borderWidth: 2.5,
-                borderColor: theme.background,
+                borderColor: '#16294D',
               }}
             >
-              <Ionicons name="pencil" size={12} color={theme.onPrimary} />
+              <Ionicons name="pencil" size={12} color={heroTheme.onPrimary} />
             </View>
           </Pressable>
 
           <Txt variant="h2" style={{ marginTop: spacing.md }}>
             {p?.fullName || 'Athlete'}
           </Txt>
-          <Txt variant="small" color={theme.textTertiary} style={{ marginTop: 2 }}>
+          <Txt variant="small" color={heroTheme.textTertiary} style={{ marginTop: 2 }}>
             {p?.email || user?.email}
           </Txt>
 
@@ -113,10 +116,10 @@ export default function ProfileScreen() {
             <Badge
               label={humanise(p?.experienceLevel) || 'Beginner'}
               icon="fitness"
-              color={theme.primary}
+              color={heroTheme.primary}
             />
             {p?.membershipDays != null && (
-              <Badge label={`${p.membershipDays} days in`} icon="calendar" color={theme.streak} />
+              <Badge label={`${p.membershipDays} days in`} icon="calendar" color={heroTheme.streak} />
             )}
           </View>
 
@@ -127,7 +130,7 @@ export default function ProfileScreen() {
               marginTop: spacing.lg,
               paddingTop: spacing.base,
               borderTopWidth: StyleSheet.hairlineWidth,
-              borderTopColor: theme.divider,
+              borderTopColor: heroTheme.divider,
               alignSelf: 'stretch',
             }}
           >

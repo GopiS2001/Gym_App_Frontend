@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useStatusBarStyle } from '@/hooks/useStatusBarStyle';
 import { useApi } from '@/hooks/useApi';
 import { plansApi } from '@/services/endpoints';
 import { Screen } from '@/components/Screen';
@@ -27,6 +28,7 @@ const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'
 export default function PlanDetailScreen() {
   const confirm = useConfirm();
   const { theme, spacing, radius } = useTheme();
+  useStatusBarStyle('light');
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
