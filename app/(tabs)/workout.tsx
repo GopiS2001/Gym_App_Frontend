@@ -491,6 +491,7 @@ function LibraryTab() {
         sortOrder: 'asc',
       }),
     [debouncedSearch, categorySlug, difficulty, equipment, favouritesOnly],
+    { refetchOnFocus: true },
   );
 
   const activeFilterCount =
