@@ -201,7 +201,7 @@ export function ScreenHeader({
             <Txt variant="h1" color="#FFFFFF" numberOfLines={1}>
               {title}
             </Txt>
-            {subtitle && (
+            {!!subtitle && (
               <Txt variant="small" color="#A9C3F0" numberOfLines={1} style={{ marginTop: 2 }}>
                 {subtitle}
               </Txt>
