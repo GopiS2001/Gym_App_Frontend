@@ -386,6 +386,8 @@ function WarmupTab() {
               onDelete={bulkDelete.run}
               deleting={bulkDelete.deleting}
             />
+
+            {items.map((w) => {
               const accent = w.category?.colorHex || theme.primary;
               const amount = warmupAmount(w);
               return (
