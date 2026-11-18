@@ -211,6 +211,7 @@ function PlansTab() {
                     }
                     icon={plan.status === 'ACTIVE' ? 'radio-button-on' : undefined}
                   />
+                  </View>
                   <Badge label={DIFFICULTY_LABELS[plan.difficultyLevel] || ''} color="#FFFFFF" />
                 </View>
 
