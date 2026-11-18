@@ -294,7 +294,7 @@ export function Field({
 
   return (
     <View style={[{ marginBottom: spacing.base }, style]}>
-      {label && (
+      {!!label && (
         <Txt variant="caption" color={theme.textTertiary} style={{ marginBottom: spacing.sm, marginLeft: 2 }}>
           {label}
         </Txt>

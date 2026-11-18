@@ -129,7 +129,7 @@ export function ActionRow({
   const { spacing } = useTheme();
   return (
     <GlassCard style={[{ marginBottom: spacing.base }, style]}>
-      {title && (
+      {!!title && (
         <Txt variant="h4" style={{ marginBottom: spacing.md }}>
           {title}
         </Txt>
@@ -236,7 +236,7 @@ export function FormSection({
         <IconWell icon={icon} color={color} size={38} />
         <View style={{ flex: 1, marginLeft: spacing.md }}>
           <Txt variant="h4">{title}</Txt>
-          {subtitle && (
+          {!!subtitle && (
             <Txt variant="caption" color={theme.textTertiary} style={{ marginTop: 1 }}>
               {subtitle}
             </Txt>
