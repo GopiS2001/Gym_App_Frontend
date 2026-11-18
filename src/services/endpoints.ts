@@ -187,7 +187,9 @@ export const plansApi = {
     request<WorkoutPlan>(api.patch(`/workout-plans/${id}/activate`)),
   archive: (id: string) =>
     request<WorkoutPlan>(api.patch(`/workout-plans/${id}/archive`)),
-  remove: (id: string) => request<any>(api.delete(`/workout-plans/${id}`)),
+  /** `silent` skips the automatic toast — bulk deletes show one summary instead. */
+  remove: (id: string, opts?: { silent?: boolean }) =>
+    request<any>(api.delete(`/workout-plans/${id}`, { silent: opts?.silent } as any)),
 
   addExercise: (planId: string, payload: any) =>
     request<WorkoutPlan>(api.post(`/workout-plans/${planId}/exercises`, payload)),
