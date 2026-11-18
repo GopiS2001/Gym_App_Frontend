@@ -126,7 +126,9 @@ export const warmupsApi = {
   create: (payload: Partial<Warmup>) => request<Warmup>(api.post('/warmups', payload)),
   update: (id: string, payload: Partial<Warmup>) =>
     request<Warmup>(api.patch(`/warmups/${id}`, payload)),
-  remove: (id: string) => request<any>(api.delete(`/warmups/${id}`)),
+  /** `silent` skips the automatic toast — bulk deletes show one summary instead. */
+  remove: (id: string, opts?: { silent?: boolean }) =>
+    request<any>(api.delete(`/warmups/${id}`, { silent: opts?.silent } as any)),
 };
 
 // ------------------------------------------------------------ categories
