@@ -193,7 +193,13 @@ function PlansTab() {
               />
 
               <View style={{ flex: 1, padding: spacing.base, justifyContent: 'space-between' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {selection.selecting && (
+                    <View style={{ marginRight: spacing.sm }}>
+                      <SelectCheck checked={selection.isSelected(plan.id)} onImage />
+                    </View>
+                  )}
+                  <View style={{ flex: 1, flexDirection: 'row' }}>
                   <Badge
                     label={plan.status}
                     color={
