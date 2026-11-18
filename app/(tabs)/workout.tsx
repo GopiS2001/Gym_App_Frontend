@@ -140,6 +140,15 @@ function PlansTab() {
         ))}
       </View>
 
+      {!plans.loading && !plans.error && (
+        <BulkSelectBar
+          selection={selection}
+          total={planItems.length}
+          onDelete={bulkDelete.run}
+          deleting={bulkDelete.deleting}
+        />
+      )}
+
       {plans.loading ? (
         <LoadingState />
       ) : plans.error ? (
