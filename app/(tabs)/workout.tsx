@@ -494,6 +494,18 @@ function LibraryTab() {
   const activeFilterCount =
     (difficulty ? 1 : 0) + (equipment ? 1 : 0) + (favouritesOnly ? 1 : 0);
 
+  const exerciseItems = exercises.data?.items || [];
+  const selection = useBulkSelect(exerciseItems.map((e) => e.id));
+  const bulkDelete = useBulkDelete({
+    selection,
+    noun: ['exercise', 'exercises'],
+    remove: (id) => exercisesApi.remove(id, { silent: true }),
+    onDone: () => {
+      exercises.refresh();
+      categories.refresh();
+    },
+  });
+
   const toggleFavourite = async (exercise: Exercise) => {
     await exercisesApi.toggleFavourite(exercise.id).catch(() => undefined);
     exercises.refresh();
