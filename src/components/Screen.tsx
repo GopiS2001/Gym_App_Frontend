@@ -209,7 +209,7 @@ export function ScreenHeader({
           </View>
         </ThemeScope>
 
-        {right && <View style={{ marginLeft: spacing.sm }}>{right}</View>}
+        {!!right && <View style={{ marginLeft: spacing.sm }}>{right}</View>}
       </View>
     </View>
   );
