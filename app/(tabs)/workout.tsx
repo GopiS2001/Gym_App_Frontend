@@ -308,6 +308,13 @@ function WarmupTab() {
   };
 
   const items = warmups.data?.items || [];
+  const selection = useBulkSelect(items.map((w) => w.id));
+  const bulkDelete = useBulkDelete({
+    selection,
+    noun: ['warm-up', 'warm-ups'],
+    remove: (id) => warmupsApi.remove(id, { silent: true }),
+    onDone: warmups.refresh,
+  });
   const totalSeconds = items.reduce((sum, w) => sum + (w.durationSeconds || 0), 0);
 
   return (
