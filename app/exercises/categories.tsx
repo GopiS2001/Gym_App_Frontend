@@ -19,6 +19,7 @@ import {
   Txt,
 } from '@/components/ui';
 import { useDialog } from '@/components/Dialog';
+import { RowAction } from '@/components/premium';
 import type { WorkoutCategory } from '@/types/models';
 
 const SWATCHES = [
