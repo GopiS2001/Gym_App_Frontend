@@ -15,7 +15,7 @@ import { useConfirm } from '@/components/Dialog';
 import { ExerciseGallery } from '@/components/ExerciseGallery';
 import { ExerciseVideo } from '@/components/ExerciseVideo';
 import { IconWell } from '@/components/premium';
-import { warmupAmount } from '../(tabs)/workout';
+import { warmupAmount } from '@/utils/format';
 
 /** One warm-up: banner, amount, notes, photos and video. */
 export default function WarmupDetailScreen() {
@@ -99,7 +99,7 @@ export default function WarmupDetailScreen() {
           <View style={{ flexDirection: 'row', marginBottom: spacing.sm }}>
             <Badge label={w.category?.name?.toUpperCase() || 'GENERAL'} color={w.category ? accent : '#FFFFFF'} />
           </View>
-          <Txt variant="h1" color={heroImage ? '#FFFFFF' : theme.text}>
+          <Txt variant="h1" color="#FFFFFF">
             {w.name}
           </Txt>
         </View>

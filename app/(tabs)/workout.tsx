@@ -23,7 +23,7 @@ import {
   Txt,
 } from '@/components/ui';
 import { ActionRow, ActionTile, ArrowDisc, IconWell, SegmentedControl } from '@/components/premium';
-import { DIFFICULTY_LABELS, WEEK_DAY_LABELS, formatMinutes } from '@/utils/format';
+import { DIFFICULTY_LABELS, WEEK_DAY_LABELS, formatMinutes, warmupAmount } from '@/utils/format';
 import type { Exercise, Warmup, WorkoutCategory } from '@/types/models';
 
 type TabKey = 'plans' | 'warmup' | 'library';
@@ -247,18 +247,6 @@ function PlansTab() {
 
 // --------------------------------------------------------------- warm-up
 
-/** Seconds as "45 sec", "2 min" or "1 min 30 sec". */
-export function warmupAmount(w: Pick<Warmup, 'durationSeconds' | 'reps'>): string {
-  const parts: string[] = [];
-  if (w.durationSeconds) {
-    const m = Math.floor(w.durationSeconds / 60);
-    const sec = w.durationSeconds % 60;
-    parts.push(m ? (sec ? `${m} min ${sec} sec` : `${m} min`) : `${sec} sec`);
-  }
-  if (w.reps) parts.push(`${w.reps} reps`);
-  return parts.join(' · ');
-}
-
 function WarmupTab() {
   const { theme, spacing } = useTheme();
   const router = useRouter();
@@ -364,10 +352,26 @@ function WarmupTab() {
                 <GlassCard
                   key={w.id}
                   style={{ marginBottom: spacing.base }}
-                  onPress={() => router.push({ pathname: '/warmups/create', params: { id: w.id } })}
+                  onPress={() => router.push(`/warmups/${w.id}`)}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <IconWell icon={w.category ? 'flame-outline' : 'body-outline'} color={accent} size={46} />
+                    {w.imageUrl || w.backgroundImageUrl ? (
+                      <View style={{ width: 62, height: 62, borderRadius: 18, overflow: 'hidden', backgroundColor: `${accent}14` }}>
+                        <Image
+                          source={{ uri: (w.imageUrl || w.backgroundImageUrl)! }}
+                          style={{ flex: 1 }}
+                          contentFit="cover"
+                          transition={200}
+                        />
+                        {!!w.videoUrl && (
+                          <View style={{ position: 'absolute', right: 4, bottom: 4, width: 20, height: 20, borderRadius: 10, backgroundColor: 'rgba(10,22,48,0.7)', alignItems: 'center', justifyContent: 'center' }}>
+                            <Ionicons name="play" size={11} color="#FFFFFF" />
+                          </View>
+                        )}
+                      </View>
+                    ) : (
+                      <IconWell icon={w.videoUrl ? 'play-circle-outline' : w.category ? 'flame-outline' : 'body-outline'} color={accent} size={46} />
+                    )}
                     <View style={{ flex: 1, marginLeft: spacing.md }}>
                       <Txt variant="bodyStrong" numberOfLines={1}>
                         {w.name}

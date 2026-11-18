@@ -97,8 +97,11 @@ export function ExerciseMediaEditor({
   value,
   onChange,
   videoError,
+  folders = { images: 'exercises', videos: 'exercise-videos' },
 }: {
   value: MediaState;
+  /** Upload folders on the server. */
+  folders?: { images: string; videos: string };
   /** Functional updates, because uploads finish after the state has moved on. */
   onChange: (update: (prev: MediaState) => MediaState) => void;
   videoError?: string;
@@ -112,7 +115,7 @@ export function ExerciseMediaEditor({
   const uploadBackground = async (bg: BackgroundImage) => {
     onChange((p) => ({ ...p, background: { ...bg, uploading: true, failed: false } }));
     try {
-      const res = await mediaApi.upload(bg.uri, 'exercises', bg.meta);
+      const res = await mediaApi.upload(bg.uri, folders.images, bg.meta);
       onChange((p) =>
         p.background?.uri === bg.uri
           ? { ...p, background: { ...p.background, uploading: false, url: res.mediaUrl } }
@@ -151,7 +154,7 @@ export function ExerciseMediaEditor({
   const uploadImage = async (item: ImageItem) => {
     patchImage(item.key, { uploading: true, failed: false });
     try {
-      const res = await mediaApi.upload(item.uri, 'exercises', item.meta);
+      const res = await mediaApi.upload(item.uri, folders.images, item.meta);
       patchImage(item.key, { uploading: false, url: res.mediaUrl });
     } catch {
       patchImage(item.key, { uploading: false, failed: true });
@@ -212,7 +215,7 @@ export function ExerciseMediaEditor({
   const uploadVideo = async (file: VideoFile) => {
     onChange((p) => ({ ...p, videoFile: { ...file, uploading: true, failed: false } }));
     try {
-      const res = await mediaApi.upload(file.uri, 'exercise-videos', file.meta);
+      const res = await mediaApi.upload(file.uri, folders.videos, file.meta);
       onChange((p) =>
         p.videoFile?.uri === file.uri
           ? { ...p, videoFile: { ...p.videoFile, uploading: false, url: res.mediaUrl } }

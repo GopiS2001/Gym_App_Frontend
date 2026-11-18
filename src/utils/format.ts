@@ -193,3 +193,15 @@ export const WEEK_DAY_LABELS: Record<string, string> = {
   SATURDAY: 'Sat',
   SUNDAY: 'Sun',
 };
+
+/** A warm-up's time and reps, e.g. "1 min 30 sec · 15 reps". */
+export function warmupAmount(w: { durationSeconds?: number | null; reps?: number | null }): string {
+  const parts: string[] = [];
+  if (w.durationSeconds) {
+    const m = Math.floor(w.durationSeconds / 60);
+    const sec = w.durationSeconds % 60;
+    parts.push(m ? (sec ? `${m} min ${sec} sec` : `${m} min`) : `${sec} sec`);
+  }
+  if (w.reps) parts.push(`${w.reps} reps`);
+  return parts.join(' · ');
+}

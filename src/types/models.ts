@@ -93,6 +93,10 @@ export interface Warmup {
   durationSeconds?: number | null;
   reps?: number | null;
   description?: string | null;
+  imageUrl?: string | null;
+  imageUrls?: string[] | null;
+  backgroundImageUrl?: string | null;
+  videoUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
