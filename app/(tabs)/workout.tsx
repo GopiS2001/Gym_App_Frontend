@@ -380,7 +380,12 @@ function WarmupTab() {
               </View>
             </GlassCard>
 
-            {items.map((w) => {
+            <BulkSelectBar
+              selection={selection}
+              total={items.length}
+              onDelete={bulkDelete.run}
+              deleting={bulkDelete.deleting}
+            />
               const accent = w.category?.colorHex || theme.primary;
               const amount = warmupAmount(w);
               return (
