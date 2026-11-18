@@ -153,20 +153,22 @@ export default function CategoriesScreen() {
                     </Txt>
                   </Pressable>
 
-                  <Pressable
-                    onPress={() => {
-                      setEditing(category);
-                      setShowForm(true);
-                    }}
-                    hitSlop={8}
-                    style={{ padding: 6 }}
-                  >
-                    <Ionicons name="create-outline" size={18} color={theme.textSecondary} />
-                  </Pressable>
-
-                  <Pressable onPress={() => remove(category)} hitSlop={8} style={{ padding: 6 }}>
-                    <Ionicons name="trash-outline" size={18} color={theme.danger} />
-                  </Pressable>
+                  <View style={{ flexDirection: 'row', gap: spacing.sm, marginLeft: spacing.sm }}>
+                    <RowAction
+                      icon="pencil"
+                      label={`Edit ${category.name}`}
+                      onPress={() => {
+                        setEditing(category);
+                        setShowForm(true);
+                      }}
+                    />
+                    <RowAction
+                      icon="trash"
+                      tone="danger"
+                      label={`Delete ${category.name}`}
+                      onPress={() => remove(category)}
+                    />
+                  </View>
                 </View>
               </GlassCard>
             );
