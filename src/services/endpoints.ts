@@ -161,7 +161,9 @@ export const exercisesApi = {
     request<{ exerciseId: string; isFavourite: boolean }>(
       api.post(`/exercises/${id}/favourite`),
     ),
-  remove: (id: string) => request<any>(api.delete(`/exercises/${id}`)),
+  /** `silent` skips the automatic toast — bulk deletes show one summary instead. */
+  remove: (id: string, opts?: { silent?: boolean }) =>
+    request<any>(api.delete(`/exercises/${id}`, { silent: opts?.silent } as any)),
 };
 
 // ---------------------------------------------------------- workout plans
