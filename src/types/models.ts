@@ -84,6 +84,19 @@ export interface WorkoutCategory {
   exerciseCount?: number;
 }
 
+/** A warm-up drill; with no category it is a general one. */
+export interface Warmup {
+  id: string;
+  name: string;
+  categoryId?: string | null;
+  category?: Pick<WorkoutCategory, 'id' | 'name' | 'slug' | 'colorHex' | 'iconName'> | null;
+  durationSeconds?: number | null;
+  reps?: number | null;
+  description?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Exercise {
   id: string;
   categoryId: string;

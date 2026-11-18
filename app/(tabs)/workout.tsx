@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useApi, useDebounced } from '@/hooks/useApi';
-import { categoriesApi, exercisesApi, plansApi, sessionsApi } from '@/services/endpoints';
+import { categoriesApi, exercisesApi, plansApi, sessionsApi, warmupsApi } from '@/services/endpoints';
+import { useConfirm } from '@/components/Dialog';
 import { Screen, ScreenHeader } from '@/components/Screen';
 import { GlassCard } from '@/components/Glass';
 import {
@@ -23,9 +24,9 @@ import {
 } from '@/components/ui';
 import { ActionRow, ActionTile, ArrowDisc, IconWell, SegmentedControl } from '@/components/premium';
 import { DIFFICULTY_LABELS, WEEK_DAY_LABELS, formatMinutes } from '@/utils/format';
-import type { Exercise, WorkoutCategory } from '@/types/models';
+import type { Exercise, Warmup, WorkoutCategory } from '@/types/models';
 
-type TabKey = 'plans' | 'library';
+type TabKey = 'plans' | 'warmup' | 'library';
 
 export default function WorkoutScreen() {
   const { theme, spacing, radius } = useTheme();
@@ -36,13 +37,15 @@ export default function WorkoutScreen() {
     <Screen scroll={false}>
       <ScreenHeader
         title="Workout"
-        subtitle="Plans and your exercise library"
+        subtitle="Plans, warm-ups and your exercise library"
         right={
           <IconButton
             icon="add"
             color={theme.primary}
             onPress={() =>
-              tab === 'plans' ? router.push('/plans/create') : router.push('/exercises/create')
+              router.push(
+                tab === 'plans' ? '/plans/create' : tab === 'warmup' ? '/warmups/create' : '/exercises/create',
+              )
             }
           />
         }
@@ -50,14 +53,15 @@ export default function WorkoutScreen() {
 
       <SegmentedControl<TabKey>
         options={[
-          { value: 'plans', label: 'My Plans', icon: 'clipboard-outline' },
+          { value: 'plans', label: 'Plans', icon: 'clipboard-outline' },
+          { value: 'warmup', label: 'Warm-up', icon: 'flame-outline' },
           { value: 'library', label: 'Exercises', icon: 'barbell-outline' },
         ]}
         value={tab}
         onChange={setTab}
       />
 
-      {tab === 'plans' ? <PlansTab /> : <LibraryTab />}
+      {tab === 'plans' ? <PlansTab /> : tab === 'warmup' ? <WarmupTab /> : <LibraryTab />}
     </Screen>
   );
 }
@@ -238,6 +242,165 @@ function PlansTab() {
         ))
       )}
     </ScrollView>
+  );
+}
+
+// --------------------------------------------------------------- warm-up
+
+/** Seconds as "45 sec", "2 min" or "1 min 30 sec". */
+export function warmupAmount(w: Pick<Warmup, 'durationSeconds' | 'reps'>): string {
+  const parts: string[] = [];
+  if (w.durationSeconds) {
+    const m = Math.floor(w.durationSeconds / 60);
+    const sec = w.durationSeconds % 60;
+    parts.push(m ? (sec ? `${m} min ${sec} sec` : `${m} min`) : `${sec} sec`);
+  }
+  if (w.reps) parts.push(`${w.reps} reps`);
+  return parts.join(' · ');
+}
+
+function WarmupTab() {
+  const { theme, spacing } = useTheme();
+  const router = useRouter();
+  const confirm = useConfirm();
+  // '' = all, 'none' = general (no category), otherwise a category id.
+  const [categoryId, setCategoryId] = useState('');
+
+  const categories = useApi(() => categoriesApi.list(), []);
+  const warmups = useApi(
+    () => warmupsApi.list({ categoryId: categoryId || undefined, limit: 200 }),
+    [categoryId],
+    { refetchOnFocus: true },
+  );
+
+  const openCreate = () =>
+    router.push({
+      pathname: '/warmups/create',
+      params: categoryId && categoryId !== 'none' ? { categoryId } : {},
+    });
+
+  const handleDelete = async (w: Warmup) => {
+    const ok = await confirm({
+      title: 'Delete warm-up',
+      message: `Delete "${w.name}"?`,
+      tone: 'danger',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
+    await warmupsApi.remove(w.id).catch(() => undefined);
+    warmups.refresh();
+  };
+
+  const items = warmups.data?.items || [];
+  const totalSeconds = items.reduce((sum, w) => sum + (w.durationSeconds || 0), 0);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ flexGrow: 0, marginBottom: spacing.md }}
+        contentContainerStyle={{ paddingRight: spacing.lg, paddingVertical: 4 }}
+      >
+        <Chip label="All" selected={!categoryId} onPress={() => setCategoryId('')} />
+        <Chip
+          label="General"
+          icon="body-outline"
+          selected={categoryId === 'none'}
+          onPress={() => setCategoryId(categoryId === 'none' ? '' : 'none')}
+        />
+        {(categories.data?.items || []).map((c: WorkoutCategory) => (
+          <Chip
+            key={c.id}
+            label={c.name}
+            color={c.colorHex || undefined}
+            selected={categoryId === c.id}
+            onPress={() => setCategoryId(categoryId === c.id ? '' : c.id)}
+          />
+        ))}
+      </ScrollView>
+
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {warmups.loading ? (
+          <LoadingState />
+        ) : warmups.error ? (
+          <ErrorState message={warmups.error} onRetry={warmups.refetch} />
+        ) : !items.length ? (
+          <GlassCard>
+            <EmptyState
+              icon="flame-outline"
+              title="No warm-ups yet"
+              message="Add the drills you do before training. Pick a category, or leave it empty for a general warm-up."
+              actionLabel="Add a warm-up"
+              onAction={openCreate}
+            />
+          </GlassCard>
+        ) : (
+          <>
+            <GlassCard variant="hero" style={{ marginBottom: spacing.base }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <IconWell icon="flame" color="#A9C3F0" size={44} />
+                <View style={{ flex: 1, marginLeft: spacing.md }}>
+                  <Txt variant="caption" color="#A9C3F0">
+                    WARM-UP ROUTINE
+                  </Txt>
+                  <Txt variant="h4" style={{ marginTop: 2 }}>
+                    {items.length} drill{items.length === 1 ? '' : 's'}
+                    {totalSeconds ? ` · about ${Math.max(1, Math.round(totalSeconds / 60))} min` : ''}
+                  </Txt>
+                </View>
+                <ArrowDisc icon="add" onPress={openCreate} />
+              </View>
+            </GlassCard>
+
+            {items.map((w) => {
+              const accent = w.category?.colorHex || theme.primary;
+              const amount = warmupAmount(w);
+              return (
+                <GlassCard
+                  key={w.id}
+                  style={{ marginBottom: spacing.base }}
+                  onPress={() => router.push({ pathname: '/warmups/create', params: { id: w.id } })}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <IconWell icon={w.category ? 'flame-outline' : 'body-outline'} color={accent} size={46} />
+                    <View style={{ flex: 1, marginLeft: spacing.md }}>
+                      <Txt variant="bodyStrong" numberOfLines={1}>
+                        {w.name}
+                      </Txt>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 6 }}>
+                        <Badge
+                          label={w.category?.name?.toUpperCase() || 'GENERAL'}
+                          size="sm"
+                          color={w.category ? accent : theme.textTertiary}
+                        />
+                        {!!amount && (
+                          <Txt variant="caption" color={theme.textTertiary} numberOfLines={1}>
+                            {amount}
+                          </Txt>
+                        )}
+                      </View>
+                      {!!w.description && (
+                        <Txt variant="caption" color={theme.textSecondary} numberOfLines={2} style={{ marginTop: 4 }}>
+                          {w.description}
+                        </Txt>
+                      )}
+                    </View>
+                    <Pressable onPress={() => handleDelete(w)} hitSlop={10} style={{ padding: 4 }}>
+                      <Ionicons name="trash-outline" size={19} color={theme.danger} />
+                    </Pressable>
+                  </View>
+                </GlassCard>
+              );
+            })}
+          </>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 

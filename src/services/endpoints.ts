@@ -42,6 +42,7 @@ import type {
   MealReminder,
   MealReminderList,
   WorkoutSchedule,
+  Warmup,
 } from '@/types/models';
 
 type Query = Record<string, any> | undefined;
@@ -113,6 +114,19 @@ export const goalTypesApi = {
   remove: (id: string) => request<any>(api.delete(`/goal-types/${id}`)),
   reorder: (orderedIds: string[]) =>
     request<any>(api.patch('/goal-types/reorder', { orderedIds })),
+};
+
+// --------------------------------------------------------------- warm-ups
+
+export const warmupsApi = {
+  /** `categoryId: 'none'` lists general warm-ups only. */
+  list: (query?: Query) =>
+    request<Paginated<Warmup>>(api.get('/warmups', { params: params(query) })),
+  get: (id: string) => request<Warmup>(api.get(`/warmups/${id}`)),
+  create: (payload: Partial<Warmup>) => request<Warmup>(api.post('/warmups', payload)),
+  update: (id: string, payload: Partial<Warmup>) =>
+    request<Warmup>(api.patch(`/warmups/${id}`, payload)),
+  remove: (id: string) => request<any>(api.delete(`/warmups/${id}`)),
 };
 
 // ------------------------------------------------------------ categories
