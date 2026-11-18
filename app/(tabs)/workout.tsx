@@ -81,6 +81,15 @@ function PlansTab() {
   );
   const active = useApi(() => sessionsApi.active(), [], { refetchOnFocus: true });
 
+  const planItems = plans.data?.items || [];
+  const selection = useBulkSelect(planItems.map((p) => p.id));
+  const bulkDelete = useBulkDelete({
+    selection,
+    noun: ['plan', 'plans'],
+    remove: (id) => plansApi.remove(id, { silent: true }),
+    onDone: plans.refresh,
+  });
+
   return (
     <ScrollView
       style={{ flex: 1 }}
