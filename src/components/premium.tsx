@@ -55,6 +55,61 @@ export function IconWell({
   );
 }
 
+// ----------------------------------------------------------------- row action
+
+/**
+ * Compact tinted 3D button for per-row actions (edit / delete). The tone
+ * picks the accent; the fill and border are pale versions of it so the icon
+ * stays the focal point.
+ */
+export function RowAction({
+  icon,
+  onPress,
+  tone = 'primary',
+  label,
+  size = 38,
+}: {
+  icon: IconName;
+  onPress: () => void;
+  tone?: 'primary' | 'danger';
+  /** Accessibility label, e.g. "Edit Chest". */
+  label: string;
+  size?: number;
+}) {
+  const { theme } = useTheme();
+  const accent = tone === 'danger' ? theme.danger : theme.primary;
+  const fill = tone === 'danger' ? theme.dangerSoft : theme.primarySoft;
+  const border = /^#[0-9a-f]{6}$/i.test(accent) ? `${accent}40` : theme.glassBorder;
+
+  return (
+    <Pressable
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+        onPress();
+      }}
+      hitSlop={6}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: fill,
+        borderWidth: StyleSheet.hairlineWidth * 2,
+        borderColor: border,
+        boxShadow: pressed
+          ? theme.elevation.pressed
+          : `0px 6px 14px -8px ${/^#[0-9a-f]{6}$/i.test(accent) ? `${accent}99` : 'rgba(0,0,0,0.3)'}, inset 0px 1px 0px rgba(255,255,255,0.22)`,
+        transform: pressed ? [{ scale: 0.92 }] : [{ scale: 1 }],
+      })}
+    >
+      <Ionicons name={icon} size={size * 0.45} color={accent} />
+    </Pressable>
+  );
+}
+
 // ---------------------------------------------------------------- action tile
 
 /** Round 3D icon button with a label underneath. */
