@@ -655,12 +655,30 @@ function LibraryTab() {
               {exercises.data.meta.total === 1 ? '' : 'S'}
             </Txt>
 
+            <BulkSelectBar
+              selection={selection}
+              total={exerciseItems.length}
+              onDelete={bulkDelete.run}
+              deleting={bulkDelete.deleting}
+            />
+
             {exercises.data.items.map((exercise) => (
               <ExerciseRow
                 key={exercise.id}
                 exercise={exercise}
-                onPress={() => router.push(`/exercises/${exercise.id}`)}
+                onPress={() =>
+                  selection.selecting
+                    ? selection.toggle(exercise.id)
+                    : router.push(`/exercises/${exercise.id}`)
+                }
                 onFavourite={() => toggleFavourite(exercise)}
+                rightElement={
+                  selection.selecting ? (
+                    <Pressable onPress={() => selection.toggle(exercise.id)} hitSlop={10} style={{ padding: 4 }}>
+                      <SelectCheck checked={selection.isSelected(exercise.id)} />
+                    </Pressable>
+                  ) : undefined
+                }
               />
             ))}
           </>
