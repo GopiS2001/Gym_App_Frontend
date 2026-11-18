@@ -438,9 +438,15 @@ function WarmupTab() {
                         </Txt>
                       )}
                     </View>
-                    <Pressable onPress={() => handleDelete(w)} hitSlop={10} style={{ padding: 4 }}>
-                      <Ionicons name="trash-outline" size={19} color={theme.danger} />
-                    </Pressable>
+                    {selection.selecting ? (
+                      <Pressable onPress={() => selection.toggle(w.id)} hitSlop={10} style={{ padding: 4 }}>
+                        <SelectCheck checked={selection.isSelected(w.id)} />
+                      </Pressable>
+                    ) : (
+                      <Pressable onPress={() => handleDelete(w)} hitSlop={10} style={{ padding: 4 }}>
+                        <Ionicons name="trash-outline" size={19} color={theme.danger} />
+                      </Pressable>
+                    )}
                   </View>
                 </GlassCard>
               );
