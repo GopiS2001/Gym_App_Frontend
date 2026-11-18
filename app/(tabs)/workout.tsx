@@ -473,8 +473,10 @@ function LibraryTab() {
 
   const debouncedSearch = useDebounced(search, 350);
 
-  const categories = useApi(() => categoriesApi.list(), []);
-  const filters = useApi(() => exercisesApi.filters(), []);
+  // Refetch on focus so exercises created/edited/deleted on another screen
+  // show up as soon as the user navigates back here.
+  const categories = useApi(() => categoriesApi.list(), [], { refetchOnFocus: true });
+  const filters = useApi(() => exercisesApi.filters(), [], { refetchOnFocus: true });
 
   const exercises = useApi(
     () =>
