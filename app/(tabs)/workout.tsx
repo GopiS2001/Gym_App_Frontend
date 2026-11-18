@@ -169,7 +169,9 @@ function PlansTab() {
             key={plan.id}
             padded={false}
             style={{ marginBottom: spacing.base }}
-            onPress={() => router.push(`/plans/${plan.id}`)}
+            onPress={() =>
+              selection.selecting ? selection.toggle(plan.id) : router.push(`/plans/${plan.id}`)
+            }
           >
             <View style={{ height: 150 }}>
               {plan.coverImageUrl ? (
