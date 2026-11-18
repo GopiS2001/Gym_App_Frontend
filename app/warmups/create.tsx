@@ -8,6 +8,13 @@ import { Screen, ScreenHeader } from '@/components/Screen';
 import { Button, Chip, Field, IconButton, LoadingState, Txt } from '@/components/ui';
 import { FieldLabel, FormSection, Notice } from '@/components/premium';
 import { useConfirm } from '@/components/Dialog';
+import {
+  ExerciseMediaEditor,
+  MediaState,
+  mediaBusy,
+  mediaPayload,
+  mediaStateFrom,
+} from '@/components/ExerciseMediaEditor';
 
 /** Whole positive number from a text field, or null when left empty. */
 function toCount(text: string): number | null | 'invalid' {
@@ -44,6 +51,7 @@ export default function WarmupFormScreen() {
   const [seconds, setSeconds] = useState('');
   const [reps, setReps] = useState('');
   const [description, setDescription] = useState('');
+  const [media, setMedia] = useState<MediaState>(() => mediaStateFrom());
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -56,6 +64,7 @@ export default function WarmupFormScreen() {
     setSeconds(total % 60 ? String(total % 60) : '');
     setReps(w.reps ? String(w.reps) : '');
     setDescription(w.description || '');
+    setMedia(mediaStateFrom(w));
   }, [existing.data]);
 
   const save = useMutation(async (payload: Record<string, any>) =>
@@ -74,6 +83,10 @@ export default function WarmupFormScreen() {
     const r = toCount(reps);
     if (m === 'invalid' || s === 'invalid') next.duration = 'Use whole numbers for minutes and seconds';
     if (r === 'invalid') next.reps = 'Use a whole number';
+    const link = media.videoLink.trim();
+    if (media.videoMode === 'link' && link && !/^https?:\/\/\S+$/i.test(link)) {
+      next.video = 'Enter a full link starting with https://';
+    }
     setErrors(next);
     if (Object.keys(next).length) return;
 
@@ -84,6 +97,7 @@ export default function WarmupFormScreen() {
       durationSeconds: total || null,
       reps: r,
       description: description.trim() || null,
+      ...mediaPayload(media),
     });
     if (result) router.back();
   };
@@ -118,6 +132,15 @@ export default function WarmupFormScreen() {
           ) : undefined
         }
       />
+
+      <FormSection icon="images-outline" title="Photos & video" subtitle="Optional: show how it's done">
+        <ExerciseMediaEditor
+          value={media}
+          onChange={setMedia}
+          videoError={errors.video}
+          folders={{ images: 'warmups', videos: 'warmup-videos' }}
+        />
+      </FormSection>
 
       <FormSection icon="flame-outline" title="Warm-up" subtitle="Name and the category it suits">
         <Field
@@ -208,6 +231,7 @@ export default function WarmupFormScreen() {
         size="lg"
         fullWidth
         loading={save.loading}
+        disabled={mediaBusy(media)}
         onPress={handleSave}
       />
     </Screen>
