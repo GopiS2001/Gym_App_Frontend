@@ -150,7 +150,7 @@ export function BulkSelectBar({
             alignItems: 'center',
             paddingHorizontal: spacing.md,
             paddingVertical: 6,
-            borderRadius: radius.pill ?? 999,
+            borderRadius: radius.pill,
             backgroundColor: theme.dangerSoft,
             opacity: pressed ? 0.7 : 1,
           })}
