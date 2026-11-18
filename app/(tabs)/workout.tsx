@@ -394,7 +394,9 @@ function WarmupTab() {
                 <GlassCard
                   key={w.id}
                   style={{ marginBottom: spacing.base }}
-                  onPress={() => router.push(`/warmups/${w.id}`)}
+                  onPress={() =>
+                    selection.selecting ? selection.toggle(w.id) : router.push(`/warmups/${w.id}`)
+                  }
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     {w.imageUrl || w.backgroundImageUrl ? (
