@@ -256,7 +256,9 @@ async function refreshAccessToken(): Promise<string | null> {
 
 api.interceptors.response.use(
   (response) => {
-    // Every successful add / edit / delete confirms itself with a toast.
+    // Every successful add / edit / delete confirms itself with a toast,
+    // unless the caller asked for quiet (`{ silent: true }` in the config).
+    if ((response.config as { silent?: boolean } | undefined)?.silent) return response;
     const message = toastForWrite(
       response.config?.method,
       response.config?.url,
