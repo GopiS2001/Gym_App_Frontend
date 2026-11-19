@@ -80,7 +80,7 @@ function PlayerBody() {
   const handleDelete = async () => {
     const ok = await confirm({
       title: 'Delete song',
-      message: `Delete "${current.songName}" from ${current.movieTitle}? Its audio and picture links are removed too.`,
+      message: `Remove "${current.songName}" (${current.movieTitle}) from your music?`,
       tone: 'danger',
       confirmLabel: 'Delete',
     });
