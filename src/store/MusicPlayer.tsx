@@ -82,13 +82,13 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     }).catch(() => undefined);
   }, []);
 
-  /** Loads the song at `index` of `queue` and starts it. */
+  /** Loads `song` into the player and, unless told otherwise, starts it. */
   const load = useCallback(
-    (song: Song) => {
+    (song: Song, autoplay = true) => {
       const uri = resolveMediaUrl(song.audioUrl);
       if (!uri) return;
       player.replace({ uri });
-      player.play();
+      if (autoplay) player.play();
       try {
         player.setActiveForLockScreen(true, {
           title: song.songName,
