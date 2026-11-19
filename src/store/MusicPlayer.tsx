@@ -242,6 +242,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     shuffle,
     repeat,
     playQueue,
+    jumpTo,
     togglePlay,
     next,
     previous,
