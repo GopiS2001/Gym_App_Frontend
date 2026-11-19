@@ -139,6 +139,7 @@ export default function SongFormScreen() {
       movieTitle: movieTitle.trim(),
       songName: songName.trim(),
       imageUrl: imageUrl || null,
+      audioUrl: audioUrl || null,
     });
     if (result) router.back();
   };
