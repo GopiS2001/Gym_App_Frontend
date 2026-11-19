@@ -298,6 +298,18 @@ export default function SongFormScreen() {
         disabled={uploading || audioUploading}
         onPress={handleSave}
       />
+
+      {isEdit && (
+        <Button
+          title="Delete song"
+          icon="trash-outline"
+          variant="danger"
+          fullWidth
+          loading={remove.loading}
+          onPress={handleDelete}
+          style={{ marginTop: spacing.md }}
+        />
+      )}
     </Screen>
   );
 }
