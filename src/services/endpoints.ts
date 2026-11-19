@@ -43,6 +43,7 @@ import type {
   MealReminderList,
   WorkoutSchedule,
   Warmup,
+  Song,
 } from '@/types/models';
 
 type Query = Record<string, any> | undefined;
