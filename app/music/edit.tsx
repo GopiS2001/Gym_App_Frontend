@@ -247,6 +247,37 @@ export default function SongFormScreen() {
         />
       </FormSection>
 
+      <FormSection icon="headset-outline" title="Audio file" subtitle="MP3, M4A, WAV… needed to play the song">
+        {audioUploading ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm }}>
+            <ActivityIndicator color={theme.primary} />
+            <Txt variant="small" color={theme.textSecondary} style={{ marginLeft: spacing.sm }}>
+              Uploading audio…
+            </Txt>
+          </View>
+        ) : audioUrl ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons name="checkmark-circle" size={20} color={theme.success} />
+            <Txt variant="small" style={{ flex: 1, marginLeft: spacing.sm, fontWeight: '600' }} numberOfLines={1}>
+              {audioName || 'Audio file attached'}
+            </Txt>
+            <Button title="Replace" size="sm" variant="glass" onPress={pickAudio} />
+            <IconButton
+              icon="close"
+              variant="plain"
+              size={34}
+              color={theme.danger}
+              onPress={() => {
+                setAudioUrl('');
+                setAudioName('');
+              }}
+            />
+          </View>
+        ) : (
+          <Button title="Choose audio file" icon="musical-note-outline" variant="glass" fullWidth onPress={pickAudio} />
+        )}
+      </FormSection>
+
       {!!(save.error || remove.error) && <Notice tone="danger" text={(save.error || remove.error)!} />}
 
       <Button
