@@ -460,7 +460,9 @@ export const mediaApi = {
       meta?.fileName ||
       (uri.startsWith('blob:') || uri.startsWith('data:') ? '' : uri.split('/').pop()) ||
       '';
-    const ext = (/\.(\w+)$/.exec(rawName)?.[1] || (isVideoHint ? 'mp4' : 'jpg')).toLowerCase();
+    const ext = (
+      /\.(\w+)$/.exec(rawName)?.[1] || (isVideoHint ? 'mp4' : isAudioHint ? 'mp3' : 'jpg')
+    ).toLowerCase();
     const type = meta?.mimeType || MIME_BY_EXT[ext] || 'image/jpeg';
     const name = rawName || `upload-${Date.now()}.${ext}`;
 
