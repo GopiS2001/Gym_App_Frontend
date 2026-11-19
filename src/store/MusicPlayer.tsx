@@ -15,6 +15,16 @@ import type { Song } from '@/types/models';
 
 export type RepeatMode = 'off' | 'all' | 'one';
 
+/**
+ * Background playback and lock-screen controls need the native service that
+ * the expo-audio config plugin adds at build time. Expo Go is a prebuilt app
+ * without it (and web has no lock screen), so there every call to those APIs
+ * just logs "Failed to start the expo-audio playback service". In those
+ * environments music plays while the app is open and those extras are skipped.
+ */
+const LOCK_SCREEN_SUPPORTED =
+  Platform.OS !== 'web' && Constants.executionEnvironment !== ExecutionEnvironment.StoreClient;
+
 interface MusicPlayerValue {
   /** The song loaded in the player, or null when nothing is queued. */
   current: Song | null;
