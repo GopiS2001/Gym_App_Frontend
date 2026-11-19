@@ -90,6 +90,8 @@ export interface Song {
   movieTitle: string;
   songName: string;
   imageUrl?: string | null;
+  /** The uploaded audio file the player streams; songs without one can't play. */
+  audioUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
