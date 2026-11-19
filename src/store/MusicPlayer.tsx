@@ -214,10 +214,12 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
 
   const stop = useCallback(() => {
     player.pause();
-    try {
-      player.clearLockScreenControls?.();
-    } catch {
-      // Not supported on this platform.
+    if (LOCK_SCREEN_SUPPORTED) {
+      try {
+        player.clearLockScreenControls();
+      } catch {
+        // Not supported on this platform.
+      }
     }
     setQueue([]);
     setOrder([]);
