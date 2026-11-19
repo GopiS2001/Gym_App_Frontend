@@ -82,7 +82,10 @@ export default function RootLayout() {
           {/* Dialogs sit above the navigator so any screen can raise one. */}
           <DialogProvider>
             <AuthProvider>
-              <RootNavigator />
+              {/* Above the navigator so music keeps playing across screens. */}
+              <MusicPlayerProvider>
+                <RootNavigator />
+              </MusicPlayerProvider>
             </AuthProvider>
           </DialogProvider>
           {/* Save / update / delete confirmations, above every screen. */}
