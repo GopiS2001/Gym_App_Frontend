@@ -21,9 +21,12 @@ export type RepeatMode = 'off' | 'all' | 'one';
  * without it (and web has no lock screen), so there every call to those APIs
  * just logs "Failed to start the expo-audio playback service". In those
  * environments music plays while the app is open and those extras are skipped.
+ *
+ * `isRunningInExpoGo()` checks for Expo Go's own native module, the same test
+ * expo-notifications uses. `Constants.executionEnvironment` is not reliable
+ * for this: Expo Go on SDK 58 did not report `storeClient`.
  */
-const LOCK_SCREEN_SUPPORTED =
-  Platform.OS !== 'web' && Constants.executionEnvironment !== ExecutionEnvironment.StoreClient;
+const LOCK_SCREEN_SUPPORTED = Platform.OS !== 'web' && !isRunningInExpoGo();
 
 interface MusicPlayerValue {
   /** The song loaded in the player, or null when nothing is queued. */
