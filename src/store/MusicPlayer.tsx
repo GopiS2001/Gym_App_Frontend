@@ -89,7 +89,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     setAudioModeAsync({
       playsInSilentMode: true,
-      shouldPlayInBackground: true,
+      shouldPlayInBackground: LOCK_SCREEN_SUPPORTED,
       interruptionMode: 'doNotMix',
     }).catch(() => undefined);
   }, []);
