@@ -323,6 +323,22 @@ export default function SettingsScreen() {
         />
       </GlassCard>
 
+      {/* ------------------------------------------------------ music */}
+      <SectionHeader title="Music" icon="musical-notes-outline" />
+      <GlassCard padded={false} style={{ marginBottom: spacing.base }}>
+        <MenuRow
+          icon="musical-notes-outline"
+          label="My music"
+          onPress={() => router.push('/music')}
+        />
+        <MenuRow
+          icon="add-circle-outline"
+          label="Add a song"
+          onPress={() => router.push('/music/edit')}
+          last
+        />
+      </GlassCard>
+
       {/* ---------------------------------------------------- account */}
       <SectionHeader title="Account" icon="shield-outline" />
       <GlassCard padded={false} style={{ marginBottom: spacing.base }}>
