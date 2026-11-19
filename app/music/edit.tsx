@@ -91,6 +91,38 @@ export default function SongFormScreen() {
     }
   };
 
+  const pickAudio = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: 'audio/*',
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+    const asset = result.canceled ? null : result.assets[0];
+    if (!asset) return;
+
+    setAudioUploading(true);
+    try {
+      const uploaded = await mediaApi.upload(asset.uri, 'songs-audio', {
+        mimeType: asset.mimeType || 'audio/mpeg',
+        fileName: asset.name,
+      });
+      setAudioUrl(uploaded.mediaUrl);
+      setAudioName(asset.name);
+      // Handy default: the file name is usually the song name.
+      if (!songName.trim()) {
+        setSongName(asset.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim());
+      }
+    } catch {
+      notify({
+        title: 'Upload failed',
+        message: 'The audio file could not be uploaded. Files up to 50 MB are supported.',
+        tone: 'danger',
+      });
+    } finally {
+      setAudioUploading(false);
+    }
+  };
+
   const clearImage = () => {
     setLocalImage(null);
     setImageUrl('');
