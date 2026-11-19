@@ -89,11 +89,23 @@ export function Screen({
           style={{ top: 300, left: -140 }}
         />
 
+        {/*
+          The app draws edge to edge, so Android no longer shrinks the window
+          when the keyboard opens: the fields below the focused one stayed
+          hidden behind it and could not be scrolled to. Padding the screen by
+          the keyboard's height keeps every field reachable on both platforms.
+        */}
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'web' ? undefined : 'padding'}
+        >
         {scroll ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={{ paddingTop: insets.top + spacing.sm }}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
             refreshControl={
               onRefresh ? (
                 <RefreshControl
