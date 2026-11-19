@@ -32,6 +32,9 @@ export default function SongFormScreen() {
   const [imageUrl, setImageUrl] = useState('');
   const [localImage, setLocalImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [audioUrl, setAudioUrl] = useState('');
+  const [audioName, setAudioName] = useState('');
+  const [audioUploading, setAudioUploading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
