@@ -286,7 +286,7 @@ export default function SongFormScreen() {
         size="lg"
         fullWidth
         loading={save.loading}
-        disabled={uploading}
+        disabled={uploading || audioUploading}
         onPress={handleSave}
       />
     </Screen>
