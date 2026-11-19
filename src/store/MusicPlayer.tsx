@@ -27,6 +27,8 @@ interface MusicPlayerValue {
   repeat: RepeatMode;
   /** Replaces the queue with `songs` and starts at `startId` (or the first). */
   playQueue: (songs: Song[], startId?: string, opts?: { shuffle?: boolean }) => void;
+  /** Plays a song already in the queue, keeping the queue and shuffle as they are. */
+  jumpTo: (songId: string) => void;
   togglePlay: () => void;
   next: () => void;
   previous: () => void;
