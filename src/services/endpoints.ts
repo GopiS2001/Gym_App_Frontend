@@ -455,6 +455,7 @@ export const mediaApi = {
     meta?: { mimeType?: string | null; fileName?: string | null },
   ) => {
     const isVideoHint = meta?.mimeType?.startsWith('video/');
+    const isAudioHint = meta?.mimeType?.startsWith('audio/');
     const rawName =
       meta?.fileName ||
       (uri.startsWith('blob:') || uri.startsWith('data:') ? '' : uri.split('/').pop()) ||
