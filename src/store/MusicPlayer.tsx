@@ -36,6 +36,10 @@ interface MusicPlayerValue {
   toggleShuffle: () => void;
   cycleRepeat: () => void;
   stop: () => void;
+  /** Call after a song is edited so the queue shows the new details. */
+  updateSong: (song: Song) => void;
+  /** Call after a song is deleted; if it was playing, the next one starts. */
+  removeSong: (songId: string) => void;
 }
 
 const MusicPlayerContext = createContext<MusicPlayerValue | null>(null);
