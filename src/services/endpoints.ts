@@ -502,4 +502,13 @@ const MIME_BY_EXT: Record<string, string> = {
   webm: 'video/webm',
   '3gp': 'video/3gpp',
   mkv: 'video/x-matroska',
+  mp3: 'audio/mpeg',
+  m4a: 'audio/mp4',
+  aac: 'audio/aac',
+  wav: 'audio/wav',
+  ogg: 'audio/ogg',
+  oga: 'audio/ogg',
+  opus: 'audio/ogg',
+  flac: 'audio/flac',
+  amr: 'audio/amr',
 };
