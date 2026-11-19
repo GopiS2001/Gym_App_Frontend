@@ -211,6 +211,66 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     setCursor(-1);
   }, [player]);
 
+  const updateSong = useCallback(
+    (song: Song) => {
+      const old = queue.find((s) => s.id === song.id);
+      if (!old) return;
+      if (!song.audioUrl) {
+        // It can no longer play: take it out of the queue.
+        // (removeSong is declared below; defer to the next tick.)
+        setTimeout(() => removeRef.current(song.id), 0);
+        return;
+      }
+      setQueue((q) => q.map((s) => (s.id === song.id ? song : s)));
+      if (current?.id === song.id && old.audioUrl !== song.audioUrl) {
+        load(song, status.playing);
+      } else if (current?.id === song.id) {
+        try {
+          player.updateLockScreenMetadata({
+            title: song.songName,
+            artist: song.movieTitle,
+            artworkUrl: resolveMediaUrl(song.imageUrl),
+          });
+        } catch {
+          // Not supported on this platform.
+        }
+      }
+    },
+    [current?.id, load, player, queue, status.playing],
+  );
+
+  const removeSong = useCallback(
+    (songId: string) => {
+      const qi = queue.findIndex((s) => s.id === songId);
+      if (qi < 0) return;
+
+      const nextQueue = queue.filter((_, i) => i !== qi);
+      const nextOrder = order.filter((i) => i !== qi).map((i) => (i > qi ? i - 1 : i));
+      if (!nextOrder.length) {
+        stop();
+        return;
+      }
+
+      const wasCurrent = order[cursor] === qi;
+      setQueue(nextQueue);
+      setOrder(nextOrder);
+
+      if (wasCurrent) {
+        // The following song slides into this slot; wrap to the start at the end.
+        const nextCursor = cursor < nextOrder.length ? cursor : 0;
+        setCursor(nextCursor);
+        load(nextQueue[nextOrder[nextCursor]], status.playing);
+      } else {
+        const currentQi = order[cursor];
+        const shifted = currentQi > qi ? currentQi - 1 : currentQi;
+        setCursor(nextOrder.indexOf(shifted));
+      }
+    },
+    [cursor, load, order, queue, status.playing, stop],
+  );
+  const removeRef = useRef(removeSong);
+  removeRef.current = removeSong;
+
   // Advance when a song ends. A ref guards against handling one finish twice.
   const handledFinish = useRef(false);
   useEffect(() => {
