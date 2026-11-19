@@ -279,6 +279,13 @@ export default function ProfileScreen() {
           caption="Nudges to eat and log"
           color={theme.nutrition}
           onPress={() => router.push('/nutrition/reminders')}
+        />
+        <MenuRow
+          icon="musical-notes-outline"
+          label="Music"
+          caption="Songs, movies and covers"
+          color={theme.primary}
+          onPress={() => router.push('/music')}
           last
         />
       </GlassCard>
