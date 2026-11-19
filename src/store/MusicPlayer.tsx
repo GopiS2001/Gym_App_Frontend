@@ -101,6 +101,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       if (!uri) return;
       player.replace({ uri });
       if (autoplay) player.play();
+      if (!LOCK_SCREEN_SUPPORTED) return;
       try {
         player.setActiveForLockScreen(true, {
           title: song.songName,
