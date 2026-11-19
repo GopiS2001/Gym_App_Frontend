@@ -314,6 +314,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     toggleShuffle,
     cycleRepeat,
     stop,
+    updateSong,
+    removeSong,
   };
 
   return <MusicPlayerContext.Provider value={value}>{children}</MusicPlayerContext.Provider>;
