@@ -155,7 +155,10 @@ export default function SongFormScreen() {
       tone: 'danger',
       confirmLabel: 'Delete',
     });
-    if (ok && (await remove.mutate())) router.back();
+    if (ok && (await remove.mutate())) {
+      music.removeSong(id!);
+      router.back();
+    }
   };
 
   if (isEdit && existing.loading) {
