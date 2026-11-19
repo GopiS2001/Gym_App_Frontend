@@ -237,7 +237,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       setQueue((q) => q.map((s) => (s.id === song.id ? song : s)));
       if (current?.id === song.id && old.audioUrl !== song.audioUrl) {
         load(song, status.playing);
-      } else if (current?.id === song.id) {
+      } else if (current?.id === song.id && LOCK_SCREEN_SUPPORTED) {
         try {
           player.updateLockScreenMetadata({
             title: song.songName,
