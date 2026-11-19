@@ -65,6 +65,12 @@
         {
           "color": "#3ECF8E"
         }
+      ],
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
       ]
     ],
     "experiments": {
