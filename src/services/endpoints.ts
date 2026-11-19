@@ -132,6 +132,18 @@ export const warmupsApi = {
     request<any>(api.delete(`/warmups/${id}`, { silent: opts?.silent } as any)),
 };
 
+// ----------------------------------------------------------------- music
+
+export const songsApi = {
+  list: (query?: Query) =>
+    request<Paginated<Song>>(api.get('/songs', { params: params(query) })),
+  get: (id: string) => request<Song>(api.get(`/songs/${id}`)),
+  create: (payload: Partial<Song>) => request<Song>(api.post('/songs', payload)),
+  update: (id: string, payload: Partial<Song>) =>
+    request<Song>(api.patch(`/songs/${id}`, payload)),
+  remove: (id: string) => request<any>(api.delete(`/songs/${id}`)),
+};
+
 // ------------------------------------------------------------ categories
 
 export const categoriesApi = {
