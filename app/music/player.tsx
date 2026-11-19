@@ -129,7 +129,7 @@ export default function PlayerScreen() {
           {queueAfter.map((song) => (
             <Pressable
               key={song.id}
-              onPress={() => music.playQueue(music.upNext, song.id, { shuffle: false })}
+              onPress={() => music.jumpTo(song.id)}
               style={({ pressed }) => ({
                 flexDirection: 'row',
                 alignItems: 'center',
