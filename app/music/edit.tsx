@@ -12,6 +12,7 @@ import { AppImage } from '@/components/AppImage';
 import { Button, Field, IconButton, LoadingState, Txt } from '@/components/ui';
 import { FormSection, Notice } from '@/components/premium';
 import { useDialog } from '@/components/Dialog';
+import { useMusicPlayer } from '@/store/MusicPlayer';
 
 /** Add a song, or edit / delete one when opened with `?id=`. */
 export default function SongFormScreen() {
