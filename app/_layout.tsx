@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { AuthProvider, useAuth } from '@/store/AuthContext';
+import { MusicPlayerProvider } from '@/store/MusicPlayer';
 import { DialogProvider } from '@/components/Dialog';
 import { ToastHost } from '@/components/Toast';
 import { LoadingState } from '@/components/ui';
