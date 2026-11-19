@@ -123,6 +123,7 @@ export function Screen({
         ) : (
           <View style={{ flex: 1, paddingTop: insets.top + spacing.sm }}>{body}</View>
         )}
+        </KeyboardAvoidingView>
       </ScreenGradient>
     </View>
   );
