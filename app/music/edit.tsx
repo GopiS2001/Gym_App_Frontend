@@ -43,6 +43,8 @@ export default function SongFormScreen() {
     setMovieTitle(s.movieTitle);
     setSongName(s.songName);
     setImageUrl(s.imageUrl || '');
+    setAudioUrl(s.audioUrl || '');
+    setAudioName(s.audioUrl ? 'Audio file attached' : '');
   }, [existing.data]);
 
   const save = useMutation(async (payload: Record<string, any>) =>
