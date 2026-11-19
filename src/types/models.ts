@@ -84,6 +84,16 @@ export interface WorkoutCategory {
   exerciseCount?: number;
 }
 
+/** A song in the workout music list. */
+export interface Song {
+  id: string;
+  movieTitle: string;
+  songName: string;
+  imageUrl?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /** A warm-up drill; with no category it is a general one. */
 export interface Warmup {
   id: string;
