@@ -18,6 +18,7 @@ export default function SongFormScreen() {
   const { theme, spacing, radius } = useTheme();
   const router = useRouter();
   const { confirm, notify } = useDialog();
+  const music = useMusicPlayer();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const isEdit = !!id;
 
