@@ -477,10 +477,14 @@ export const mediaApi = {
 
     const res = await api.post(`/media/upload?folder=${folder}`, form, {
       headers: { 'Content-Type': 'multipart/form-data' },
-      // Videos over a phone's Wi-Fi can take a while.
-      timeout: type.startsWith('video/') ? 5 * 60_000 : 60_000,
+      // Videos and songs over a phone's Wi-Fi can take a while.
+      timeout: type.startsWith('video/') || type.startsWith('audio/') ? 5 * 60_000 : 60_000,
     });
-    return res.data.data as { id: string; mediaUrl: string; mediaType: 'IMAGE' | 'VIDEO' };
+    return res.data.data as {
+      id: string;
+      mediaUrl: string;
+      mediaType: 'IMAGE' | 'VIDEO' | 'AUDIO';
+    };
   },
 };
 
