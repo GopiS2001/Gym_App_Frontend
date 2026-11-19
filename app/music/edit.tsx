@@ -141,7 +141,11 @@ export default function SongFormScreen() {
       imageUrl: imageUrl || null,
       audioUrl: audioUrl || null,
     });
-    if (result) router.back();
+    if (result) {
+      // Keep the player's queue in step with the new details / audio.
+      if (isEdit) music.updateSong(result);
+      router.back();
+    }
   };
 
   const handleDelete = async () => {
