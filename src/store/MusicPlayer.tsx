@@ -128,6 +128,14 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     [goTo, shuffle],
   );
 
+  const jumpTo = useCallback(
+    (songId: string) => {
+      const at = order.findIndex((i) => queue[i]?.id === songId);
+      if (at >= 0) goTo(at);
+    },
+    [goTo, order, queue],
+  );
+
   const next = useCallback(() => {
     if (!order.length) return;
     if (cursor + 1 < order.length) goTo(cursor + 1);
